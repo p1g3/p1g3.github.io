@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-01-27T18:41:37.146Z</updated>
+  <updated>2020-01-31T07:01:21.755Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>打造一个通用的信息推送框架</title>
+    <link href="http://yoursite.com/2020/01/31/%E6%89%93%E9%80%A0%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8%E7%9A%84%E4%BF%A1%E6%81%AF%E6%8E%A8%E9%80%81%E6%A1%86%E6%9E%B6/"/>
+    <id>http://yoursite.com/2020/01/31/%E6%89%93%E9%80%A0%E4%B8%80%E4%B8%AA%E9%80%9A%E7%94%A8%E7%9A%84%E4%BF%A1%E6%81%AF%E6%8E%A8%E9%80%81%E6%A1%86%E6%9E%B6/</id>
+    <published>2020-01-31T06:59:45.000Z</published>
+    <updated>2020-01-31T07:01:21.755Z</updated>
+    
+    <content type="html"><![CDATA[<p>之前问了一下学长，目前的每日安全新闻推送框架有没有开源的，发现目前好像大家都是自己用自己的，也比较浪费时间，就有了写一个通用框架来推送信息的想法。</p><h2 id="实现效果"><a href="#实现效果" class="headerlink" title="实现效果"></a>实现效果</h2><p>日常解析RSS内容：</p><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gbfqo0ssvjj31gk0u01kx.jpg" alt="12ff0a991c011d9328676f63e5f3d9d3"></p><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gbfqo1y2sqj31gk0u01kx.jpg" alt="3aa9275f87da67352104f0354c288525"></p><p>请忽略我的字体…</p><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gbfqo2kg5aj31gk0u04qp.jpg" alt="0bee8a3dc6de9820261525584a4a9dce"></p><p>内置了155个插件，包含各个类别的安全博客、论坛、社区等。</p><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gbfqo3l33mj31gk0u0dta.jpg" alt="5f21fed523bab87dc01ef91ee69d3194"></p><h2 id="ReadMe"><a href="#ReadMe" class="headerlink" title="ReadMe"></a>ReadMe</h2><ul><li>目录结构</li></ul><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">├── generat_plugin.py</span><br><span class="line">├── info_collect.py</span><br><span class="line">└── plugins</span><br><span class="line">    ├── ...</span><br></pre></td></tr></table></figure><p>将文章分为web、re、pwn、generic、coding、news这几类，方便推送给用户时，用户可根据自身需求快速查看对应文章，如需增加类别，需要修改以下代码：</p><p>在model_types中添加你要新增的类别名称即可。</p><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gbfqo477qtj30zq042mxu.jpg" alt="6f54ba3920f5143224656da86ea78075"></p><p>RSS源：<a href="https://github.com/zer0yu/CyberSecurityRSS" target="_blank" rel="noopener">zer0yu/CyberSecurityRSS: RSS: 优秀的网络安全知识来源</a></p><p>存入mongodb的数据字段：</p><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gbfqo4mwjxj327y0d6453.jpg" alt="24d5ae03167d39eca38c034024bbffbc"></p><p>使用插件式开发，可以满足自定义插件以及自定义类别的需求，只需要按照格式写好对应的插件即可。</p><h2 id="插件开发"><a href="#插件开发" class="headerlink" title="插件开发"></a>插件开发</h2><p>插件格式：<code>{}_{}_plugin.format(name,type,)</code></p><p>generat_plugin.py是用来以模板形式生成插件的,usage如下：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">usage: generat_plugin.py [-h] -u URL -pn PLUGIN_NAME --type TYPE --rsstype</span><br><span class="line">                         RSSTYPE</span><br><span class="line"></span><br><span class="line">optional arguments:</span><br><span class="line">  -h, --help            show this help message and exit</span><br><span class="line">  -u URL, --url URL     Rss Url.</span><br><span class="line">  -pn PLUGIN_NAME, --plugin_name PLUGIN_NAME</span><br><span class="line">                        Plugin name.</span><br><span class="line">  --type TYPE           Plugin type.</span><br></pre></td></tr></table></figure><p>这几个参数都是必须要传入的，url是rss的url，pn是插件的名称，type是插件的type，即web、re、pwn这些，使用这款插件生成工具，可以解决百分之90的rss源解析。</p><p>使用方式：</p><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gbfqo5bfroj31ya02wq46.jpg" alt="994502b98087e84ab63b548129b1bd6d"></p><p>按照格式传入信息后，会在当前目录下生成插件：</p><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gbfqo5o708j31iy02sdh9.jpg" alt="e78b712bde489809ed60d5e69d5615f4"></p><p>如果输出如上，即打印出了rss内的文章信息，并且两个时间格式都是相同的，就可以直接用了，不过在用之前要删去这两行：</p><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gbfqo6lzfaj31d60323zt.jpg" alt="c96b2616f1c61c31bc897b5de3ec2178"></p><p>PS：我在模板中设置了rss的解析时间为10s，如果超出这个解析时间，默认定为解析失败，有需要的可以自行修改。</p><p>⚠️：插件生成工具不是万能的，有的插件并不支持我自定义好了的模板，比如某one插件。</p><p>他的rss是这样的：</p><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gbfqo7mn3hj31a40u0aly.jpg" alt="56d81b7d62daa2f8e4ab99e6f337f0d0"></p><p>里边没有我在模板中写好的updated参数，所以插件直接生成的脚本用不了，稍微改改才能用，最终运行效果如下。</p><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gbfqo8ha3yj327y0smh3z.jpg" alt="56ea64e8ccc4243b1eef1a8bfefa8bc4"></p><p>另外，写插件也并不一定非要是解析RSS的插件，其他插件都是可以的，只要最终往mongodb中插入指定结构的数据即可。</p><h2 id="技术栈"><a href="#技术栈" class="headerlink" title="技术栈"></a>技术栈</h2><ul><li>插件式开发</li><li>协程</li><li>插件式开发</li><li>数据库管理</li><li>来源分类</li></ul><h2 id="已知问题"><a href="#已知问题" class="headerlink" title="已知问题"></a>已知问题</h2><ul><li>工具运行后无法结束，一直卡顿。</li></ul><p>这是一个python3协程的bug，也不知道为什么会一直卡住，之前在群里问了许多师傅都没得到解决办法，遂在stackoverflow写了个帖子，目前还没人回复，我会一直跟进。</p><p>stackflow地址：<a href="https://stackoverflow.com/questions/59990159/asyncio-wait-for-timeout-exceptions-but-the-program-didnt-exit" target="_blank" rel="noopener">asyncio wait_for timeout exceptions but the program didn’t exit</a>。</p><p>短期解决办法：</p><ul><li>手动关闭</li><li>使用crontab在后台运行程序</li></ul><h2 id="爬取下来的数据如何利用"><a href="#爬取下来的数据如何利用" class="headerlink" title="爬取下来的数据如何利用"></a>爬取下来的数据如何利用</h2><p>这个是最简单的问题了，既然数据都有了，无非就是套各种的推送工具，如qq机器人、企业微信机器人…等等。</p><p>当然，如果你想写个前端来展示这些数据的话，也是很简单的，只需要学一天django就够了，奈何我前端实在太烂，之前想写个在线工具来用，后端一个下午解决，前端写了三天还没写好，最终他长这个样子：</p><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gbfqo9g2y0j31og0mojse.jpg" alt="be80cc0819a7a4000ca7724902df3d3b"></p><p>综上所述，如果想实现一个推送demo，其实很简单，把数据每天定时代进去就好了，附上企业微信推送的方法。</p><p>先下载企业微信，在群聊里添加一个机器人，会得到一个api地址。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">def push_wechat_group(content):</span><br><span class="line">    resp &#x3D; requests.post(&quot;https:&#x2F;&#x2F;qyapi.weixin.qq.com&#x2F;cgi-bin&#x2F;webhook&#x2F;send?key&#x3D;9651234b-f90e-4064-80fd-0a69d6c1d867&quot;,</span><br><span class="line">                         json&#x3D;&#123;&quot;msgtype&quot;: &quot;markdown&quot;,</span><br><span class="line">                               &quot;markdown&quot;: &#123;&quot;content&quot;: content&#125;&#125;)</span><br><span class="line">    if resp.json()[&quot;errno&quot;] !&#x3D; 0:</span><br><span class="line">        raise ValueError(&quot;push wechat group failed, %s&quot; % resp.text)</span><br></pre></td></tr></table></figure><p>最后把数据展示成content，传给api就好了，如上⬆️。</p><p>以下是我第一版还没做分类时的推送效果：</p><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gbfqo9wvjvj30u01hc17n.jpg" alt="0bb40dbe8354d9f3b6c149ea8dc1d497"></p><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1gbfqoadpmlj30u01hcant.jpg" alt="cfdef57f40588b7943ec342548029d38"></p><h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p><strong>开发不易，且嫖且珍惜。(开玩笑</strong></p><p>项目地址：<a href="https://github.com/p1g3/Collect-Info-Research" target="_blank" rel="noopener">https://github.com/p1g3/Collect-Info-Research</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;之前问了一下学长，目前的每日安全新闻推送框架有没有开源的，发现目前好像大家都是自己用自己的，也比较浪费时间，就有了写一个通用框架来推送信息的想法。&lt;/p&gt;
+&lt;h2 id=&quot;实现效果&quot;&gt;&lt;a href=&quot;#实现效果&quot; class=&quot;headerlink&quot; title=&quot;实现效
+      
+    
+    </summary>
+    
+    
+    
+      <category term="tools" scheme="http://yoursite.com/tags/tools/"/>
+    
+  </entry>
   
   <entry>
     <title>Hello World</title>
