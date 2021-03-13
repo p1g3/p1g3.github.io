@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="keywords" content="" />
+  <meta name="author" content="John Doe" />
+  <meta name="description" content="" />
+  
+  
+  <title>
+    
+      Tomcat学习笔记 
+      
+      
+      |
+    
+     p1g3.ink
+  </title>
+
+  
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" href="/images/favicon.png">
+  
+
+  <!-- Raleway-Font -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+
+  <!-- hexo site css -->
+  
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/github-markdown.css">
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+  <!-- jquery3.3.1 -->
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- fancybox -->
+  <link href="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.css" rel="stylesheet">
+  <script async src="https://cdn.bootcss.com/fancybox/3.5.2/jquery.fancybox.min.js"></script>
+  
+<script src="/js/fancybox.js"></script>
+
+
+  
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+  <body>
+    <div id="app">
+      <div class="header">
+  <div class="avatar">
+    <a href="/">
+      <!-- 头像取消懒加载，添加no-lazy -->
+      
+        <img src="/images/avatar.png" alt="">
+      
+    </a>
+    <div class="nickname"><a href="/">p1g3.ink</a></div>
+  </div>
+  <div class="navbar">
+    <ul>
+      
+        <li class="nav-item" data-path="/">
+          <a href="/">Home</a>
+        </li>
+      
+        <li class="nav-item" data-path="/archives/">
+          <a href="/archives/">Archives</a>
+        </li>
+      
+    </ul>
+  </div>
+</div>
+
+
+<script src="/js/activeNav.js"></script>
+
+
+
+      <div class="flex-container">
+        <!-- 文章详情页，展示文章具体内容，url形式：https://yoursite/文章标题/ -->
+<!-- 同时为「标签tag」，「朋友friend」，「分类categories」，「关于about」页面的承载页面，具体展示取决于page.type -->
+
+<!-- LaTex Display -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+
+
+
+  
+
+  
+
+  
+
+  
+  <!-- 文章内容页 url形式：https://yoursite/文章标题/ -->
+  <div class="container post-details" id="post-details">
+    <div class="post-content">
+      <div class="post-title">Tomcat学习笔记</div>
+      <div class="post-attach">
+        <span class="post-pubtime">
+          <i class="iconfont icon-updatetime" title="Update time"></i>
+          2021-03-11 23:38:48
+        </span>
+        
+      </div>
+      <div class="markdown-body">
+        <h1 id="0x00-搭建本地调试环境"><a href="#0x00-搭建本地调试环境" class="headerlink" title="0x00 搭建本地调试环境"></a>0x00 搭建本地调试环境</h1><p>官网下载太慢，遂转用国内镜像下载：<a target="_blank" rel="noopener" href="https://mirrors.cnnic.cn/apache/tomcat/%E3%80%82">https://mirrors.cnnic.cn/apache/tomcat/。</a></p>
+<p>下载完毕后，通过IDEA创建一个新项目：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008eGmZEgy1goge431204j30yo0u0n8l.jpg" alt="image-20210311173348804"></p>
+<p>选择全平台：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008eGmZEgy1goge448t9kj30yo0u0wqu.jpg" alt="image-20210311173402975"></p>
+<p>继续配置如下：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008eGmZEgy1goge455s7pj30yo0u0thu.jpg" alt="image-20210311173439058"></p>
+<p>随后在IDEA中将如下两个地方修改为当前项目地址：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008eGmZEgy1goge469cvsj315r0u07i4.jpg" alt="image-20210311175249543"></p>
+<p><img src="https://tva1.sinaimg.cn/large/008eGmZEgy1goge470qptj315r0u07fo.jpg" alt="image-20210311175300868"></p>
+<p>随后直接在IDEA中运行即可，由于我本地调试问题，就将Servlet删除了导致无法看到Servlet的效果：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008eGmZEgy1goge49ix6aj31e50u0kjf.jpg" alt="image-20210311175214703"></p>
+<p>运行效果：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008eGmZEgy1goge4aa9poj30ng0f875b.jpg" alt="image-20210311175327848"></p>
+<h1 id="0x01-Tomcat-目录详解"><a href="#0x01-Tomcat-目录详解" class="headerlink" title="0x01 Tomcat 目录详解"></a>0x01 Tomcat 目录详解</h1><p>Tomcat的目录结构如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">╭─ ~/Coding/Tomcat_Env                                                                                                                                                                                                                        18:05:40 </span><br><span class="line">╰ ls -al ./</span><br><span class="line">total 248</span><br><span class="line">drwxr-xr-x  16 p1g3  staff    512  3 11 17:32 .</span><br><span class="line">drwxr-xr-x   5 p1g3  staff    160  3 11 17:33 ..</span><br><span class="line">-rw-r-----@  1 p1g3  staff  19008  3  5 19:10 BUILDING.txt</span><br><span class="line">-rw-r-----@  1 p1g3  staff   5644  3  5 19:10 CONTRIBUTING.md</span><br><span class="line">-rw-r-----@  1 p1g3  staff  60269  3  5 19:10 LICENSE </span><br><span class="line">-rw-r-----@  1 p1g3  staff   2333  3  5 19:10 NOTICE </span><br><span class="line">-rw-r-----@  1 p1g3  staff   3372  3  5 19:10 README.md</span><br><span class="line">-rw-r-----@  1 p1g3  staff   7008  3  5 19:10 RELEASE-NOTES </span><br><span class="line">-rw-r-----@  1 p1g3  staff  16517  3  5 19:10 RUNNING.txt</span><br><span class="line">drwxr-x---@ 31 p1g3  staff    992  3  5 19:10 bin <span class="comment"># Tomcat执行脚本</span></span><br><span class="line">drwx------@ 12 p1g3  staff    384  3  5 19:10 conf <span class="comment"># Tomcat配置文件</span></span><br><span class="line">drwxr-x---@ 35 p1g3  staff   1120  3  5 19:09 lib <span class="comment"># Tomcat运行所需要的库文件</span></span><br><span class="line">drwxr-x---@  2 p1g3  staff     64  3  5 19:07 logs <span class="comment"># 日志目录</span></span><br><span class="line">drwxr-x---@  3 p1g3  staff     96  3  5 19:09 temp <span class="comment"># 临时文件</span></span><br><span class="line">drwxr-x---@  7 p1g3  staff    224  3  5 19:09 webapps <span class="comment"># WEB应用存放目录</span></span><br><span class="line">drwxr-x---@  2 p1g3  staff     64  3  5 19:07 work <span class="comment"># Tomcat的工作目录</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="1-0-bin"><a href="#1-0-bin" class="headerlink" title="1.0 bin"></a>1.0 bin</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">╭─ ~/Coding/Tomcat_Env                                                                                                                                                                                                                        18:09:52 </span><br><span class="line">╰ ls -al bin</span><br><span class="line">total 1760</span><br><span class="line">drwxr-x---@ 31 p1g3  staff     992  3  5 19:10 .</span><br><span class="line">drwxr-xr-x  16 p1g3  staff     512  3 11 17:32 ..</span><br><span class="line">-rw-r-----@  1 p1g3  staff   34728  3  5 19:09 bootstrap.jar</span><br><span class="line">-rw-r-----@  1 p1g3  staff    1664  3  5 19:10 catalina-tasks.xml</span><br><span class="line">-rw-r-----@  1 p1g3  staff   16266  3  5 19:09 catalina.bat</span><br><span class="line">-rwxr-x---@  1 p1g3  staff   24814  3  5 19:09 catalina.sh <span class="comment"># 用于启动和关闭tomcat服务器</span></span><br><span class="line">-rw-r-----@  1 p1g3  staff    2123  3  5 19:09 ciphers.bat</span><br><span class="line">-rwxr-x---@  1 p1g3  staff    1997  3  5 19:09 ciphers.sh </span><br><span class="line">-rw-r-----@  1 p1g3  staff  207420  3  5 19:09 commons-daemon-native.tar.gz</span><br><span class="line">-rw-r-----@  1 p1g3  staff   25357  3  5 19:09 commons-daemon.jar</span><br><span class="line">-rw-r-----@  1 p1g3  staff    2040  3  5 19:09 configtest.bat</span><br><span class="line">-rwxr-x---@  1 p1g3  staff    1922  3  5 19:09 configtest.sh <span class="comment"># 用于检查配置文件</span></span><br><span class="line">-rwxr-x---@  1 p1g3  staff    8836  3  5 19:09 daemon.sh</span><br><span class="line">-rw-r-----@  1 p1g3  staff    2091  3  5 19:09 digest.bat</span><br><span class="line">-rwxr-x---@  1 p1g3  staff    1965  3  5 19:09 digest.sh</span><br><span class="line">-rw-r-----@  1 p1g3  staff    3606  3  5 19:09 makebase.bat</span><br><span class="line">-rwxr-x---@  1 p1g3  staff    3382  3  5 19:09 makebase.sh</span><br><span class="line">-rw-r-----@  1 p1g3  staff    2096  3  5 19:09 migrate.bat</span><br><span class="line">-rwxr-x---@  1 p1g3  staff    1970  3  5 19:09 migrate.sh</span><br><span class="line">-rw-r-----@  1 p1g3  staff    3460  3  5 19:09 setclasspath.bat</span><br><span class="line">-rwxr-x---@  1 p1g3  staff    3708  3  5 19:09 setclasspath.sh</span><br><span class="line">-rw-r-----@  1 p1g3  staff    2020  3  5 19:09 shutdown.bat</span><br><span class="line">-rwxr-x---@  1 p1g3  staff    1902  3  5 19:09 shutdown.sh <span class="comment"># 关闭tomcat脚本（最终调用catalina）</span></span><br><span class="line">-rw-r-----@  1 p1g3  staff    2022  3  5 19:09 startup.bat</span><br><span class="line">-rwxr-x---@  1 p1g3  staff    1904  3  5 19:09 startup.sh <span class="comment"># 启动tomcat脚本（最终调用catalina）</span></span><br><span class="line">-rw-r-----@  1 p1g3  staff   46709  3  5 19:09 tomcat-juli.jar</span><br><span class="line">-rw-r-----@  1 p1g3  staff  423135  3  5 19:09 tomcat-native.tar.gz</span><br><span class="line">-rw-r-----@  1 p1g3  staff    4574  3  5 19:09 tool-wrapper.bat</span><br><span class="line">-rwxr-x---@  1 p1g3  staff    5540  3  5 19:09 tool-wrapper.sh</span><br><span class="line">-rw-r-----@  1 p1g3  staff    2026  3  5 19:09 version.bat</span><br><span class="line">-rwxr-x---@  1 p1g3  staff    1908  3  5 19:09 version.sh</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-1-conf"><a href="#1-1-conf" class="headerlink" title="1.1 conf"></a>1.1 conf</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">╭─ ~/Coding/Tomcat_Env/conf                                                                                                                                                                                                                   18:12:16 </span><br><span class="line">╰ ls -al ./</span><br><span class="line">total 464</span><br><span class="line">drwx------@ 13 p1g3  staff     416  3 11 18:08 .</span><br><span class="line">drwxr-xr-x  16 p1g3  staff     512  3 11 17:32 ..</span><br><span class="line">drwxr-x---   3 p1g3  staff      96  3 11 18:08 Catalina</span><br><span class="line">-rw-------@  1 p1g3  staff   12873  3  5 19:10 catalina.policy</span><br><span class="line">-rw-------@  1 p1g3  staff    7290  3  5 19:10 catalina.properties</span><br><span class="line">-rw-------@  1 p1g3  staff    1411  3  5 19:10 context.xml <span class="comment"># 配置环境文件</span></span><br><span class="line">-rw-------@  1 p1g3  staff    1149  3  5 19:10 jaspic-providers.xml</span><br><span class="line">-rw-------@  1 p1g3  staff    2313  3  5 19:10 jaspic-providers.xsd</span><br><span class="line">-rw-------@  1 p1g3  staff    4144  3  5 19:10 logging.properties</span><br><span class="line">-rw-------@  1 p1g3  staff    6675  3  5 19:10 server.xml <span class="comment"># Tomcat主配置文件</span></span><br><span class="line">-rw-------@  1 p1g3  staff    2164  3  5 19:10 tomcat-users.xml <span class="comment"># Tomcat用户名以及密码信息配置文件</span></span><br><span class="line">-rw-------@  1 p1g3  staff    2558  3  5 19:10 tomcat-users.xsd</span><br><span class="line">-rw-------@  1 p1g3  staff  172576  3  5 19:10 web.xml <span class="comment"># Tomcat默认的web.xml</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="1-2-webappss"><a href="#1-2-webappss" class="headerlink" title="1.2 webappss"></a>1.2 webappss</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">╭─ ~/Coding/Tomcat_Env                                                                                                                                                                                                                        18:15:43</span><br><span class="line">╰ ls -al webapps</span><br><span class="line">total 0</span><br><span class="line">drwxr-x---@  7 p1g3  staff   224  3  5 19:09 .</span><br><span class="line">drwxr-xr-x  16 p1g3  staff   512  3 11 17:32 ..</span><br><span class="line">drwxr-x---@ 13 p1g3  staff   416  3  5 19:10 ROOT</span><br><span class="line">drwxr-x---@ 60 p1g3  staff  1920  3  5 19:10 docs</span><br><span class="line">drwxr-x---@  8 p1g3  staff   256  3  5 19:10 examples</span><br><span class="line">drwxr-x---@  7 p1g3  staff   224  3  5 19:10 host-manager</span><br><span class="line">drwxr-x---@  9 p1g3  staff   288  3  5 19:10 manager</span><br></pre></td></tr></table></figure>
+
+<p>此目录用于存放tomcat服务器中需要运行的应用，默认安装的tomcat会存在几个项目，这些项目就是组成我们最开始启动tomcat时看到的界面：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008eGmZEgy1goge4biaw2j318h0u0aq3.jpg" alt="image-20210311181832993"></p>
+<h2 id="1-3-work"><a href="#1-3-work" class="headerlink" title="1.3 work"></a>1.3 work</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">╭─ ~/Coding/Tomcat_Env/webapps                                                                                                                                                                                                                18:19:26</span><br><span class="line">╰ ls -al ../work/Catalina/localhost</span><br><span class="line">total 0</span><br><span class="line">drwxr-x---  7 p1g3  staff  224  3 11 18:08 .</span><br><span class="line">drwxr-x---  3 p1g3  staff   96  3 11 18:08 ..</span><br><span class="line">drwxr-x---  3 p1g3  staff   96  3 11 18:08 ROOT</span><br><span class="line">drwxr-x---  2 p1g3  staff   64  3 11 18:08 docs</span><br><span class="line">drwxr-x---  2 p1g3  staff   64  3 11 18:08 examples</span><br><span class="line">drwxr-x---  2 p1g3  staff   64  3 11 18:08 host-manager</span><br><span class="line">drwxr-x---  2 p1g3  staff   64  3 11 18:08 manager</span><br></pre></td></tr></table></figure>
+
+<p>此目录用于存放Tomcat在运行时编译的文件，如JSP的编译文件等。</p>
+<h1 id="0x02-Tomcat的应用部署方式"><a href="#0x02-Tomcat的应用部署方式" class="headerlink" title="0x02 Tomcat的应用部署方式"></a>0x02 Tomcat的应用部署方式</h1><h2 id="2-0-直接部署"><a href="#2-0-直接部署" class="headerlink" title="2.0 直接部署"></a>2.0 直接部署</h2><p>Tomcat默认是以<code>webapps/ROOT</code>作为根节点对应用进行部署，所以如果我们想不进行任何修改直接测试应用的部署，直接将应用文件放置于ROOT目录中即可：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">╭─ ~/Coding/Tomcat_Env/webapps                                                                                                                                                                                                                18:25:08</span><br><span class="line">╰ ls ROOT</span><br><span class="line">WEB-INF   index.jsp</span><br></pre></td></tr></table></figure>
+
+<p>此时通过<code>./bin/catalina.sh start</code>启动Tomcat服务器后，访问<code>localhost:8080</code>即可查看自己的应用界面：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008eGmZEgy1goge4c1l97j30pq0c2t93.jpg" alt="image-20210311182727801"></p>
+<h2 id="2-1-将应用打包为WAR包后部署"><a href="#2-1-将应用打包为WAR包后部署" class="headerlink" title="2.1 将应用打包为WAR包后部署"></a>2.1 将应用打包为WAR包后部署</h2><blockquote>
+<p>war包是Sun提出的一种web应用程序格式，与jar类似，是很多文件的压缩包。 war包中的文件按照一定目录结构来组织。 根据其根目录下包含有html和jsp文件，或者包含有这两种文件的目录，另外还有WEB-INF目录。</p>
+</blockquote>
+<p>进入项目目录，通过<code>jar -cvf name.war *</code>将应用打包为<code>war</code>包，随后将war包复制到<code>Tomcat</code>的<code>webapps</code>目录中，随后启动Tomcat服务器，其会自动对war包进行解压：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">╭─ ~/Coding/Tomcat_Env                                                                                                                                                                                                                        18:31:39</span><br><span class="line">╰ ls -al webapps</span><br><span class="line">total 8</span><br><span class="line">drwxr-xr-x   5 p1g3  staff   160  3 11 18:29 .</span><br><span class="line">drwxr-xr-x  16 p1g3  staff   512  3 11 18:20 ..</span><br><span class="line">drwxr-xr-x   4 p1g3  staff   128  3 11 18:24 ROOT</span><br><span class="line">drwxr-x---   4 p1g3  staff   128  3 11 18:29 webapp</span><br><span class="line">-rw-r--r--   1 p1g3  staff  1048  3 11 18:28 webapp.war</span><br></pre></td></tr></table></figure>
+
+<p>此时访问<code>localhost:8080/webapp</code>即可查看自己的应用界面。</p>
+<h1 id="0x03-JSP-与-Servlet"><a href="#0x03-JSP-与-Servlet" class="headerlink" title="0x03 JSP 与 Servlet"></a>0x03 JSP 与 Servlet</h1><h2 id="3-0-JSP简介-amp-生命周期"><a href="#3-0-JSP简介-amp-生命周期" class="headerlink" title="3.0 JSP简介 &amp; 生命周期"></a>3.0 JSP简介 &amp; 生命周期</h2><p>JSP是一种用于编写动态网页的语言，可以类比于PHP，通过特殊的语法使得其能够在HTML里编写Java代码。不过由于目前MVC架构越来越流行，所以JSP也用的越来越少了，不过在一些老的项目中还是会用到JSP，因为其重构成本太高，所以JSP还是有学习的必要的。</p>
+<p>在了解JSP这门语言之前，不妨先了解一下能够解析JSP的服务器（Tomcat、Resin等）处理JSP的流程：</p>
+<ul>
+<li>用户通过浏览器访问服务器资源</li>
+<li>服务器识别到用户访问的资源为JSP文件，开始对其进行解析</li>
+<li>JSP引擎从磁盘中加载JSP文件，并通过Jasper将其转换为Java源码，这些源码文件被称为Servlet，后文将学习到</li>
+<li>JSP引擎将Servlet编译为类（.class文件），并将原始请求传递给Servlet引擎</li>
+<li>Web服务器调用Servlet引擎，载入并执行此Servlet类，在执行过程中产生的输出会输出到Response中</li>
+</ul>
+<p>JSP的生命周期与Servlet类似，都是由创建到销毁的整个过程，从上述步骤中可以看出其区别是多了一个将JSP转换为Servlet的步骤：</p>
+<ul>
+<li>编译阶段<ul>
+<li>servlet容器编译servlet源文件，生成servlet类</li>
+</ul>
+</li>
+<li>初始化阶段<ul>
+<li>加载与JSP对应的servlet类，创建其实例，并调用它的初始化方法</li>
+</ul>
+</li>
+<li>执行阶段<ul>
+<li>调用与JSP对应的servlet实例的服务方法</li>
+</ul>
+</li>
+<li>销毁阶段<ul>
+<li>调用与JSP对应的servlet实例的销毁方法，然后销毁servlet实例</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://www.runoob.com/wp-content/uploads/2014/01/jsp_life_cycle.jpg" alt="img"></p>
+<p>编译阶段：当浏览器请求服务器资源（JSP文件）时，JSP引擎会判断此资源是否未被编译，或是否相对于上一次编译进行了更改，如符合上述两种情况，则会对其重新编译。</p>
+<p>以Tomcat为例，如果访问的是<code>index.jsp</code>，则其路径为：<code>work/Catalina/localhost/application_name/org/apache/jsp/index_jsp.java</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Generated by the Jasper component of Apache Tomcat</span></span><br><span class="line"><span class="comment"> * Version: Apache Tomcat/10.0.4</span></span><br><span class="line"><span class="comment"> * Generated at: 2021-03-11 10:34:30 UTC</span></span><br><span class="line"><span class="comment"> * Note: The last modified time of this file was set to</span></span><br><span class="line"><span class="comment"> *       the last modified time of the source file after</span></span><br><span class="line"><span class="comment"> *       generation to assist with modification tracking.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">package</span> org.apache.jsp;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> jakarta.servlet.*;</span><br><span class="line"><span class="keyword">import</span> jakarta.servlet.http.*;</span><br><span class="line"><span class="keyword">import</span> jakarta.servlet.jsp.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">index_jsp</span> <span class="keyword">extends</span> <span class="title">org</span>.<span class="title">apache</span>.<span class="title">jasper</span>.<span class="title">runtime</span>.<span class="title">HttpJspBase</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">org</span>.<span class="title">apache</span>.<span class="title">jasper</span>.<span class="title">runtime</span>.<span class="title">JspSourceDependent</span>,</span></span><br><span class="line"><span class="class">                 <span class="title">org</span>.<span class="title">apache</span>.<span class="title">jasper</span>.<span class="title">runtime</span>.<span class="title">JspSourceImports</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> jakarta.servlet.jsp.JspFactory _jspxFactory =</span><br><span class="line">          jakarta.servlet.jsp.JspFactory.getDefaultFactory();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> java.util.Map&lt;java.lang.String,java.lang.Long&gt; _jspx_dependants;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> java.util.Set&lt;java.lang.String&gt; _jspx_imports_packages;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> java.util.Set&lt;java.lang.String&gt; _jspx_imports_classes;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> &#123;</span><br><span class="line">    _jspx_imports_packages = <span class="keyword">new</span> java.util.HashSet&lt;&gt;();</span><br><span class="line">    _jspx_imports_packages.add(<span class="string">&quot;jakarta.servlet&quot;</span>);</span><br><span class="line">    _jspx_imports_packages.add(<span class="string">&quot;jakarta.servlet.http&quot;</span>);</span><br><span class="line">    _jspx_imports_packages.add(<span class="string">&quot;jakarta.servlet.jsp&quot;</span>);</span><br><span class="line">    _jspx_imports_classes = <span class="keyword">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">volatile</span> jakarta.el.ExpressionFactory _el_expressionfactory;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">volatile</span> org.apache.tomcat.InstanceManager _jsp_instancemanager;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> java.util.Map&lt;java.lang.String,java.lang.Long&gt; getDependants() &#123;</span><br><span class="line">    <span class="keyword">return</span> _jspx_dependants;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> java.util.Set&lt;java.lang.String&gt; getPackageImports() &#123;</span><br><span class="line">    <span class="keyword">return</span> _jspx_imports_packages;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> java.util.Set&lt;java.lang.String&gt; getClassImports() &#123;</span><br><span class="line">    <span class="keyword">return</span> _jspx_imports_classes;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> jakarta.el.<span class="function">ExpressionFactory <span class="title">_jsp_getExpressionFactory</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (_el_expressionfactory == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (_el_expressionfactory == <span class="keyword">null</span>) &#123;</span><br><span class="line">          _el_expressionfactory = _jspxFactory.getJspApplicationContext(getServletConfig().getServletContext()).getExpressionFactory();</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> _el_expressionfactory;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> org.apache.tomcat.<span class="function">InstanceManager <span class="title">_jsp_getInstanceManager</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (_jsp_instancemanager == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (_jsp_instancemanager == <span class="keyword">null</span>) &#123;</span><br><span class="line">          _jsp_instancemanager = org.apache.jasper.runtime.InstanceManagerFactory.getInstanceManager(getServletConfig());</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> _jsp_instancemanager;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">_jspInit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">_jspDestroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">_jspService</span><span class="params">(<span class="keyword">final</span> jakarta.servlet.http.HttpServletRequest request, <span class="keyword">final</span> jakarta.servlet.http.HttpServletResponse response)</span></span></span><br><span class="line"><span class="function">      <span class="keyword">throws</span> java.io.IOException, jakarta.servlet.ServletException </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!jakarta.servlet.DispatcherType.ERROR.equals(request.getDispatcherType())) &#123;</span><br><span class="line">      <span class="keyword">final</span> java.lang.String _jspx_method = request.getMethod();</span><br><span class="line">      <span class="keyword">if</span> (<span class="string">&quot;OPTIONS&quot;</span>.equals(_jspx_method)) &#123;</span><br><span class="line">        response.setHeader(<span class="string">&quot;Allow&quot;</span>,<span class="string">&quot;GET, HEAD, POST, OPTIONS&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (!<span class="string">&quot;GET&quot;</span>.equals(_jspx_method) &amp;&amp; !<span class="string">&quot;POST&quot;</span>.equals(_jspx_method) &amp;&amp; !<span class="string">&quot;HEAD&quot;</span>.equals(_jspx_method)) &#123;</span><br><span class="line">        response.setHeader(<span class="string">&quot;Allow&quot;</span>,<span class="string">&quot;GET, HEAD, POST, OPTIONS&quot;</span>);</span><br><span class="line">        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, <span class="string">&quot;JSP 只允许 GET、POST 或 HEAD。Jasper 还允许 OPTIONS&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> jakarta.servlet.jsp.PageContext pageContext;</span><br><span class="line">    jakarta.servlet.http.HttpSession session = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">final</span> jakarta.servlet.ServletContext application;</span><br><span class="line">    <span class="keyword">final</span> jakarta.servlet.ServletConfig config;</span><br><span class="line">    jakarta.servlet.jsp.JspWriter out = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">final</span> java.lang.Object page = <span class="keyword">this</span>;</span><br><span class="line">    jakarta.servlet.jsp.JspWriter _jspx_out = <span class="keyword">null</span>;</span><br><span class="line">    jakarta.servlet.jsp.PageContext _jspx_page_context = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      response.setContentType(<span class="string">&quot;text/html; charset=UTF-8&quot;</span>);</span><br><span class="line">      pageContext = _jspxFactory.getPageContext(<span class="keyword">this</span>, request, response,</span><br><span class="line">      			<span class="keyword">null</span>, <span class="keyword">true</span>, <span class="number">8192</span>, <span class="keyword">true</span>);</span><br><span class="line">      _jspx_page_context = pageContext;</span><br><span class="line">      application = pageContext.getServletContext();</span><br><span class="line">      config = pageContext.getServletConfig();</span><br><span class="line">      session = pageContext.getSession();</span><br><span class="line">      out = pageContext.getOut();</span><br><span class="line">      _jspx_out = out;</span><br><span class="line"></span><br><span class="line">      out.write(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">      out.write(<span class="string">&quot;&lt;!DOCTYPE html&gt;\n&quot;</span>);</span><br><span class="line">      out.write(<span class="string">&quot;&lt;html&gt;\n&quot;</span>);</span><br><span class="line">      out.write(<span class="string">&quot;&lt;head&gt;\n&quot;</span>);</span><br><span class="line">      out.write(<span class="string">&quot;    &lt;title&gt;JSP - Hello World&lt;/title&gt;\n&quot;</span>);</span><br><span class="line">      out.write(<span class="string">&quot;&lt;/head&gt;\n&quot;</span>);</span><br><span class="line">      out.write(<span class="string">&quot;&lt;body&gt;\n&quot;</span>);</span><br><span class="line">      out.write(<span class="string">&quot;&lt;h1&gt;&quot;</span>);</span><br><span class="line">      out.print( <span class="string">&quot;Hello World!&quot;</span> );</span><br><span class="line">      out.write(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">      out.write(<span class="string">&quot;&lt;/h1&gt;\n&quot;</span>);</span><br><span class="line">      out.write(<span class="string">&quot;&lt;br/&gt;\n&quot;</span>);</span><br><span class="line">      out.write(<span class="string">&quot;&lt;a href=\&quot;hello-servlet\&quot;&gt;Hello Servlet&lt;/a&gt;\n&quot;</span>);</span><br><span class="line">      out.write(<span class="string">&quot;&lt;/body&gt;\n&quot;</span>);</span><br><span class="line">      out.write(<span class="string">&quot;&lt;/html&gt;&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (java.lang.Throwable t) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!(t <span class="keyword">instanceof</span> jakarta.servlet.jsp.SkipPageException))&#123;</span><br><span class="line">        out = _jspx_out;</span><br><span class="line">        <span class="keyword">if</span> (out != <span class="keyword">null</span> &amp;&amp; out.getBufferSize() != <span class="number">0</span>)</span><br><span class="line">          <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (response.isCommitted()) &#123;</span><br><span class="line">              out.flush();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">              out.clearBuffer();</span><br><span class="line">            &#125;</span><br><span class="line">          &#125; <span class="keyword">catch</span> (java.io.IOException e) &#123;&#125;</span><br><span class="line">        <span class="keyword">if</span> (_jspx_page_context != <span class="keyword">null</span>) _jspx_page_context.handlePageException(t);</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">throw</span> <span class="keyword">new</span> ServletException(t);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      _jspxFactory.releasePageContext(_jspx_page_context);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其对应的<code>index.jsp</code>源码如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">&quot;text/html; charset=UTF-8&quot;</span> pageEncoding=<span class="string">&quot;UTF-8&quot;</span> %&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;JSP - Hello World&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;h1&gt;&lt;%= <span class="string">&quot;Hello World!&quot;</span> %&gt;</span><br><span class="line">&lt;/h1&gt;</span><br><span class="line">&lt;br/&gt;</span><br><span class="line">&lt;a href=&quot;hello-servlet&quot;&gt;Hello Servlet&lt;/a&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>初始化阶段：在初始化时，容器会调用Servlet的<code>_jspInit</code>方法，默认情况下此方法为空。</p>
+<p>执行阶段：在执行时，容器会调用Servlet的<code>_jspService</code>方法，此方法需要两个参数，其类型分别对应为<code>HttpServletRequest</code>与<code>HttpServletResponse</code>，对应着请求对象以及响应对象，其中的方法体即我们在JSP中编写的内容（进行了一定的转换）。</p>
+<p>销毁阶段：在销毁阶段，容器会调用Servlet的<code>jspDestroy</code>方法用于释放某些资源，默认情况下此方法为空。</p>
+<p>上述阶段调用的所有方法都是可以被重写的，实现起来很简单，只需要在jsp文件中重写即可（不需要加下划线）：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">&quot;java&quot;</span> contentType=<span class="string">&quot;text/html; charset=UTF-8&quot;</span></span><br><span class="line">    pageEncoding=<span class="string">&quot;UTF-8&quot;</span>%&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;title&gt;life.jsp&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line"></span><br><span class="line">&lt;%! </span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">int</span> initVar=<span class="number">0</span>;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">int</span> serviceVar=<span class="number">0</span>;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">int</span> destroyVar=<span class="number">0</span>;</span><br><span class="line">%&gt;</span><br><span class="line">  </span><br><span class="line">&lt;%!</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">jspInit</span><span class="params">()</span></span>&#123;</span><br><span class="line">    initVar++;</span><br><span class="line">    System.out.println(<span class="string">&quot;jspInit(): JSP被初始化了&quot;</span>+initVar+<span class="string">&quot;次&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">jspDestroy</span><span class="params">()</span></span>&#123;</span><br><span class="line">    destroyVar++;</span><br><span class="line">    System.out.println(<span class="string">&quot;jspDestroy(): JSP被销毁了&quot;</span>+destroyVar+<span class="string">&quot;次&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">%&gt;</span><br><span class="line"></span><br><span class="line">&lt;%</span><br><span class="line">  serviceVar++;</span><br><span class="line">  System.out.println(<span class="string">&quot;_jspService(): JSP共响应了&quot;</span>+serviceVar+<span class="string">&quot;次请求&quot;</span>);</span><br><span class="line"></span><br><span class="line">  String content1=<span class="string">&quot;初始化次数 : &quot;</span>+initVar;</span><br><span class="line">  String content2=<span class="string">&quot;响应客户请求次数 : &quot;</span>+serviceVar;</span><br><span class="line">  String content3=<span class="string">&quot;销毁次数 : &quot;</span>+destroyVar;</span><br><span class="line">%&gt;</span><br><span class="line">&lt;h1&gt;菜鸟教程 JSP 测试实例&lt;/h1&gt;</span><br><span class="line">&lt;p&gt;&lt;%=content1 %&gt;&lt;/p&gt;</span><br><span class="line">&lt;p&gt;&lt;%=content2 %&gt;&lt;/p&gt;</span><br><span class="line">&lt;p&gt;&lt;%=content3 %&gt;&lt;/p&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>最终可以下一个结论，JSP与Servlet的区别并不大，我们甚至可以将其理解为一个特殊的Servlet。</strong></p>
+<h2 id="3-1-JSP的基本语法"><a href="#3-1-JSP的基本语法" class="headerlink" title="3.1 JSP的基本语法"></a>3.1 JSP的基本语法</h2><p>通过上面的学习我们了解到JSP可以被解析器处理，其可以在一个文本内同时存在有HTML以及Java源码，下面记录几种调用Java源码的方式：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;jsp:scriptlet&gt;</span><br><span class="line">  code # 正常调用代码</span><br><span class="line">&lt;/jsp:scriptlet&gt;</span><br><span class="line"></span><br><span class="line">&lt;%</span><br><span class="line">code # 同上</span><br><span class="line">%&gt;</span><br><span class="line"></span><br><span class="line">&lt;%= out text %&gt; # out text可以是基础类型，也可以是一个表达式，如果是表达式，那么其最终执行完成的返回将被输出到页面上。</span><br><span class="line"></span><br><span class="line">&lt;jsp:expression&gt;</span><br><span class="line">   out text # 同上</span><br><span class="line">&lt;/jsp:expression&gt;</span><br><span class="line"></span><br><span class="line">&lt;%! int i = 0; %&gt;  # 声明</span><br></pre></td></tr></table></figure>
+
+<p>JSP中的注释：</p>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;%-- 注释 --%&gt;</span><br><span class="line">&lt;!-- 注释 --&gt;</span><br></pre></td></tr></table></figure>
+
+<p>指令标签（用于设置对整个页面有效的属性）：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page ... %&gt; # 定义页面依赖的属性</span><br><span class="line">&lt;%@ include ... %&gt; # 包含其他文件</span><br><span class="line">&lt;%@ taglib ... %&gt; # 引入标签库的定义，可以是自定义标签</span><br></pre></td></tr></table></figure>
+
+<p>常用JSP行为：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;jsp:include page=&quot;head.jsp&quot;/&gt; # 包含其余JSP文件</span><br><span class="line">&lt;jsp:useBean id=&quot;name&quot; class=&quot;package.class&quot;/&gt; # 加载Java Bean</span><br><span class="line">&lt;jsp:setProperty name=”JavaBean实例名” property=”属性名” /&gt; # 设置Java Bean的属性</span><br><span class="line">&lt;jsp:getProperty property=&quot;userName&quot; name=&quot;user&quot;/&gt; # 读取Java Bean的属性</span><br><span class="line">&lt;jsp:forward page=&quot;tiaozhuan_b.jsp&quot;&gt; # 	从一个JSP文件向另一个文件传递一个包含用户请求的request对象</span><br></pre></td></tr></table></figure>
+
+<p>其中<code>jsp:include</code>与<code>&lt;%@ include</code>两种语法有一定的区别，主要表现在<code>&lt;%@ include</code>相当于直接合并代码，而<code>jsp:include</code>并不会合并代码，只是会将另一文件放入同一作用域中执行，通常用于header、footer等。</p>
+<p><code>jsp:forward</code>也有必要了解一下，此方法可以理解为对用户不可见的界面跳转，相当于用户访问<code>a.jsp</code>，但实际上执行的却是<code>b.jsp</code>进行处理，但浏览器中的url并不会发生改变。</p>
+<p>JSP中的九个隐含对象：</p>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>对象</strong></th>
+<th align="left"><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">request</td>
+<td align="left"><strong>HttpServletRequest</strong>类的实例</td>
+</tr>
+<tr>
+<td align="left">response</td>
+<td align="left"><strong>HttpServletResponse</strong>类的实例</td>
+</tr>
+<tr>
+<td align="left">out</td>
+<td align="left"><strong>PrintWriter</strong>类的实例，用于把结果输出至网页上</td>
+</tr>
+<tr>
+<td align="left">session</td>
+<td align="left"><strong>HttpSession</strong>类的实例</td>
+</tr>
+<tr>
+<td align="left">application</td>
+<td align="left"><strong>ServletContext</strong>类的实例，与应用上下文有关</td>
+</tr>
+<tr>
+<td align="left">config</td>
+<td align="left"><strong>ServletConfig</strong>类的实例</td>
+</tr>
+<tr>
+<td align="left">pageContext</td>
+<td align="left"><strong>PageContext</strong>类的实例，提供对JSP页面所有对象以及命名空间的访问</td>
+</tr>
+<tr>
+<td align="left">page</td>
+<td align="left">类似于Java类中的this关键字</td>
+</tr>
+<tr>
+<td align="left">exception</td>
+<td align="left"><strong>exception</strong> 类的对象，代表发生错误的 JSP 页面中对应的异常对象</td>
+</tr>
+</tbody></table>
+<h2 id="3-2-Servlet-Filter"><a href="#3-2-Servlet-Filter" class="headerlink" title="3.2 Servlet Filter"></a>3.2 Servlet Filter</h2><p>在开发WEB服务的过程中，必不可少的就是Filter，在日后审计代码时也会经常遇到，其主要起以下作用：</p>
+<ul>
+<li>在客户端的请求访问后端资源之前，拦截这些请求。</li>
+<li>在服务器的响应发送回客户端之前，处理这些响应。</li>
+</ul>
+<p>Filter是一个实现了<code>javax.servlet.Filter</code>接口的类，此接口主要包含以下几个方法：</p>
+<table>
+<thead>
+<tr>
+<th align="left">序</th>
+<th align="left">方法 &amp; 描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left"><strong>public void doFilter (ServletRequest, ServletResponse, FilterChain)</strong> 该方法完成实际的过滤操作，当客户端的请求与过滤器设置的 URL 匹配时，Servlet 容器将先调用过滤器的 doFilter 方法。FilterChain 用于访问后续过滤器。</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left"><strong>public void init(FilterConfig filterConfig)</strong> web 应用程序启动时，web 服务器将创建Filter 的实例对象，并调用其init方法，读取web.xml配置，完成对象的初始化功能，从而为后续的用户请求作好拦截的准备工作（filter对象只会创建一次，init方法也只会执行一次）。开发人员通过init方法的参数，可获得代表当前filter配置信息的FilterConfig对象。</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left"><strong>public void destroy()</strong> Servlet容器在销毁过滤器实例前调用该方法，在该方法中释放Servlet过滤器占用的资源。</td>
+</tr>
+</tbody></table>
+<p>每个WEB服务都需要在<code>WEB-INF</code>目录的<code>web.xml</code>中定义<code>filter</code>，其格式如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">filter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>FilterName<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-class</span>&gt;</span>com.example.FilterClass<span class="tag">&lt;/<span class="name">filter-class</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在定义过后，还需要配置每个Filter所匹配的请求：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>FilterName<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，有时候某个<code>url</code>会同时匹配多个filter，此时访问顺序是由<code>web.xml</code>中的<code>filter-mapping</code>的顺序决定的，如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>AuthenFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>LogFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>上面定义的<code>filter</code>，在用户访问时会优先调用<code>AuthenFilter</code>进行过滤，随后调用<code>LogFilter</code>进行过滤。当然，除此之外还可以让一个Filter匹配多个<code>url</code>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">filter</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>test<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-class</span>&gt;</span>com.test.TestFilter<span class="tag">&lt;/<span class="name">filter-class</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">filter</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>test<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/test/a/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>test<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/test/b/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>除了上面所记录的，<code>web.xml</code>还支持控制<code>Filter</code>的作用对象，通过<code>dispatcher</code>标签实现：</p>
+<ul>
+<li><code>REQUEST</code>：当用户直接访问页面时，Web容器将会调用过滤器。如果目标资源是通过RequestDispatcher的include()或forward()方法访问时，那么该过滤器就不会被调用。</li>
+<li><code>INCLUDE</code>：如果目标资源是通过RequestDispatcher的include()方法访问时，那么该过滤器将被调用。除此之外，该过滤器不会被调用。</li>
+<li><code>FORWARD</code>：如果目标资源是通过RequestDispatcher的forward()方法访问时，那么该过滤器将被调用，除此之外，该过滤器不会被调用。</li>
+<li><code>ERROR</code>：如果目标资源是通过声明式异常处理机制调用时，那么该过滤器将被调用。除此之外，过滤器不会被调用。</li>
+</ul>
+<p>在定义Filter时，可以定义初始化Filter的参数以及值，对应为FilterConfig：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">filter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>LogFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-class</span>&gt;</span>com.runoob.test.LogFilter<span class="tag">&lt;/<span class="name">filter-class</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">init-param</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>Site<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>菜鸟教程<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span><br><span class="line"></span><br><span class="line">实现的Filter代码：</span><br><span class="line">public void  init(FilterConfig config) throws ServletException &#123;</span><br><span class="line">    // 获取初始化参数</span><br><span class="line">    String site = config.getInitParameter(&quot;Site&quot;); </span><br><span class="line">    // 输出初始化参数</span><br><span class="line">    System.out.println(&quot;网站名称: &quot; + site); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一个Filter实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.runoob.test;</span><br><span class="line"></span><br><span class="line"><span class="comment">//导入必需的 java 库</span></span><br><span class="line"><span class="keyword">import</span> javax.servlet.*;</span><br><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">//实现 Filter 类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LogFilter</span> <span class="keyword">implements</span> <span class="title">Filter</span>  </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span>  <span class="title">init</span><span class="params">(FilterConfig config)</span> <span class="keyword">throws</span> ServletException </span>&#123;</span><br><span class="line">        <span class="comment">// 获取初始化参数</span></span><br><span class="line">        String site = config.getInitParameter(<span class="string">&quot;Site&quot;</span>); </span><br><span class="line"></span><br><span class="line">        <span class="comment">// 输出初始化参数</span></span><br><span class="line">        System.out.println(<span class="string">&quot;网站名称: &quot;</span> + site); </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span>  <span class="title">doFilter</span><span class="params">(ServletRequest request, ServletResponse response, FilterChain chain)</span> <span class="keyword">throws</span> java.io.IOException, ServletException </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 输出站点名称</span></span><br><span class="line">        System.out.println(<span class="string">&quot;站点网址：http://www.runoob.com&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 把请求传回过滤链（如果无过滤链，则此处直接调用Servlet）</span></span><br><span class="line">        chain.doFilter(request,response);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">( )</span></span>&#123;</span><br><span class="line">        <span class="comment">/* 在 Filter 实例被 Web 容器从服务移除之前调用 */</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Filter是Java代码审计中较为重要的一环，因为其涉及到某些安全机制，如身份验证、参数值过滤等，所以这方面的知识需要掌握好。</p>
+<h1 id="0x04-web-xml中的常见配置项"><a href="#0x04-web-xml中的常见配置项" class="headerlink" title="0x04 web.xml中的常见配置项"></a>0x04 web.xml中的常见配置项</h1><h2 id="4-0-context-param"><a href="#4-0-context-param" class="headerlink" title="4.0 context-param"></a>4.0 context-param</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">context-param</span>&gt;</span>  </span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>参数名<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span>  </span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>参数值<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span>  </span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">context-param</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>该元素用来声明应用范围(整个WEB项目)内的上下文初始化参数。</p>
+<h2 id="4-1-display-name"><a href="#4-1-display-name" class="headerlink" title="4.1 display-name"></a>4.1 display-name</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">display-name</span>&gt;</span>name<span class="tag">&lt;/<span class="name">display-name</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>该元素用于标记整个WEB项目的名称。</p>
+<h2 id="4-2-filter"><a href="#4-2-filter" class="headerlink" title="4.2 filter"></a>4.2 filter</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">filter</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>Filter Name<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">filter-class</span>&gt;</span>Filter Class<span class="tag">&lt;/<span class="name">filter-class</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">init-param</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>param-name<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>param-value<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>该元素用于标记Filter，定义其名称以及对应的class和初始化此Filter所使用的参数。</p>
+<h2 id="4-3-filter-mapping"><a href="#4-3-filter-mapping" class="headerlink" title="4.3 filter-mapping"></a>4.3 filter-mapping</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>Filter Name<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>该元素用于声明一个Filter所匹配的<code>url</code>，通常使用正则表达式进行匹配。</p>
+<h2 id="4-4-listener"><a href="#4-4-listener" class="headerlink" title="4.4 listener"></a>4.4 listener</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">listener</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>com.landray.kmss.framework.plugin.loader.PluginContextLoaderListener<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">listener</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>该元素用于声明一个Listener，其实现了javax.servlet.ServletContextListener 接口的服务器端程序，随web应用的启动而启动，<strong>只初始化一次</strong>，随web应用的停止而销毁。<strong>主要作用是： 做一些初始化的内容添加工作、设置一些基本的内容、比如一些参数或者是一些固定的对象等等。</strong></p>
+<h2 id="4-5-servlet"><a href="#4-5-servlet" class="headerlink" title="4.5 servlet"></a>4.5 servlet</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">servlet</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>Servlet Name<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>Servlet Class<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">load-on-startup</span>&gt;</span>1<span class="tag">&lt;/<span class="name">load-on-startup</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">init-param</span>&gt;</span></span><br><span class="line">                  <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>forwardPath<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">                  <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>file:$&#123;kmss.resource.path&#125;/JG_HTML/<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">init-param</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>requestPath<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>/JG_HTML/<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet</span>&gt;</span>  </span><br></pre></td></tr></table></figure>
+
+<p>该元素用于声明一个Servlet，用于后续的Mapping。</p>
+<h2 id="4-6-servlet-mapping"><a href="#4-6-servlet-mapping" class="headerlink" title="4.6 servlet-mapping"></a>4.6 servlet-mapping</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>springmvc<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span> </span><br></pre></td></tr></table></figure>
+
+<p>该元素用于指定一个<code>servlet</code>在何时被访问，与Filter类似。</p>
+<h2 id="4-7-error-page"><a href="#4-7-error-page" class="headerlink" title="4.7 error-page"></a>4.7 error-page</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">error-page</span>&gt;</span></span><br><span class="line">  			<span class="tag">&lt;<span class="name">exception-type</span>&gt;</span>java.lang.Throwable<span class="tag">&lt;/<span class="name">exception-type</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">error-code</span>&gt;</span>503<span class="tag">&lt;/<span class="name">error-code</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">location</span>&gt;</span>/resource/error.do?type=503<span class="tag">&lt;/<span class="name">location</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">error-page</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>该元素用于指定当遇到某错误时对应的处理。</p>
+<h2 id="4-8-resource-ref"><a href="#4-8-resource-ref" class="headerlink" title="4.8 resource-ref"></a>4.8 resource-ref</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">resource-ref</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">res-ref-name</span>&gt;</span>ekp<span class="tag">&lt;/<span class="name">res-ref-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">res-type</span>&gt;</span>javax.sql.DataSource<span class="tag">&lt;/<span class="name">res-type</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">res-auth</span>&gt;</span>Container<span class="tag">&lt;/<span class="name">res-auth</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">resource-ref</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>该元素用于配制某些在上下文中可以直接取的连接对象。</p>
+
+      </div>
+      
+        <div class="prev-or-next">
+          <div class="post-foot-next">
+            
+              <a href="/2021/03/11/Vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" target="_self">
+                <i class="iconfont icon-chevronleft"></i>
+                <span>Prev</span>
+              </a>
+            
+          </div>
+          <div class="post-attach">
+            <span class="post-pubtime">
+              <i class="iconfont icon-updatetime" title="Update time"></i>
+              2021-03-11 23:38:48
+            </span>
+            
+          </div>
+          <div class="post-foot-prev">
+            
+          </div>
+        </div>
+      
+    </div>
+    
+  <div class="post-catalog" id="catalog">
+    <div class="title">Contents</div>
+    <div class="catalog-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00-%E6%90%AD%E5%BB%BA%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83"><span class="toc-text">0x00 搭建本地调试环境</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-Tomcat-%E7%9B%AE%E5%BD%95%E8%AF%A6%E8%A7%A3"><span class="toc-text">0x01 Tomcat 目录详解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-0-bin"><span class="toc-text">1.0 bin</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-conf"><span class="toc-text">1.1 conf</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-webappss"><span class="toc-text">1.2 webappss</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-work"><span class="toc-text">1.3 work</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-Tomcat%E7%9A%84%E5%BA%94%E7%94%A8%E9%83%A8%E7%BD%B2%E6%96%B9%E5%BC%8F"><span class="toc-text">0x02 Tomcat的应用部署方式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-0-%E7%9B%B4%E6%8E%A5%E9%83%A8%E7%BD%B2"><span class="toc-text">2.0 直接部署</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-%E5%B0%86%E5%BA%94%E7%94%A8%E6%89%93%E5%8C%85%E4%B8%BAWAR%E5%8C%85%E5%90%8E%E9%83%A8%E7%BD%B2"><span class="toc-text">2.1 将应用打包为WAR包后部署</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-JSP-%E4%B8%8E-Servlet"><span class="toc-text">0x03 JSP 与 Servlet</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-0-JSP%E7%AE%80%E4%BB%8B-amp-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-text">3.0 JSP简介 &amp; 生命周期</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-JSP%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="toc-text">3.1 JSP的基本语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-Servlet-Filter"><span class="toc-text">3.2 Servlet Filter</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04-web-xml%E4%B8%AD%E7%9A%84%E5%B8%B8%E8%A7%81%E9%85%8D%E7%BD%AE%E9%A1%B9"><span class="toc-text">0x04 web.xml中的常见配置项</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-0-context-param"><span class="toc-text">4.0 context-param</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-display-name"><span class="toc-text">4.1 display-name</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-filter"><span class="toc-text">4.2 filter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-3-filter-mapping"><span class="toc-text">4.3 filter-mapping</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-4-listener"><span class="toc-text">4.4 listener</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-5-servlet"><span class="toc-text">4.5 servlet</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-6-servlet-mapping"><span class="toc-text">4.6 servlet-mapping</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-7-error-page"><span class="toc-text">4.7 error-page</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-8-resource-ref"><span class="toc-text">4.8 resource-ref</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+  
+<script src="/js/catalog.js"></script>
+
+
+
+
+    
+      <div class="comments-container">
+        
+
+
+
+
+
+      </div>
+    
+  </div>
+
+
+        <div class="footer">
+  <div class="social">
+    <ul>
+      
+        <li>
+          <a title="github" target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">
+            <i class="iconfont icon-github"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="email" href="">
+            <i class="iconfont icon-envelope"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="facebook" href="">
+            <i class="iconfont icon-facebooksquare"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="twitter" href="">
+            <i class="iconfont icon-twitter"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="wechat" href="">
+            <i class="iconfont icon-wechat"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="weibo" href="">
+            <i class="iconfont icon-weibo"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a title="rss" href="/atom.xml">
+            <i class="iconfont icon-rss"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Copyright © Oranges 2021</a>
+        
+    </div>
+  
+    <div class="footer-more">
+      
+        <a target="_blank" rel="noopener" href="https://github.com/zchengsite/hexo-theme-oranges">Theme by Oranges | Powered by Hexo</a>
+        
+    </div>
+  
+</div>
+
+      </div>
+
+      <div class="back-to-top hidden">
+  <a href="javascript: void(0)">
+    <i class="iconfont icon-chevronup"></i>
+  </a>
+</div>
+
+
+<script src="/js/backtotop.js"></script>
+
+
+
+      
+  <div class="search-icon" id="search-icon">
+    <a href="javascript: void(0)">
+      <i class="iconfont icon-search"></i>
+    </a>
+  </div>
+
+  <div class="search-overlay hidden">
+    <div class="search-content" tabindex="0">
+      <div class="search-title">
+        <span class="search-icon-input">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-search"></i>
+          </a>
+        </span>
+        
+          <input type="text" class="search-input" id="search-input" placeholder="Search...">
+        
+        <span class="search-close-icon" id="search-close-icon">
+          <a href="javascript: void(0)">
+            <i class="iconfont icon-close"></i>
+          </a>
+        </span>
+      </div>
+      <div class="search-result" id="search-result"></div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var inputArea = document.querySelector("#search-input")
+    var searchOverlayArea = document.querySelector(".search-overlay")
+
+    inputArea.onclick = function() {
+      getSearchFile()
+      this.onclick = null
+    }
+
+    inputArea.onkeydown = function() {
+      if(event.keyCode == 13)
+        return false
+    }
+
+    function openOrHideSearchContent() {
+      let isHidden = searchOverlayArea.classList.contains('hidden')
+      if (isHidden) {
+        searchOverlayArea.classList.remove('hidden')
+        document.body.classList.add('hidden')
+        // inputArea.focus()
+      } else {
+        searchOverlayArea.classList.add('hidden')
+        document.body.classList.remove('hidden')
+      }
+    }
+
+    function blurSearchContent(e) {
+      if (e.target === searchOverlayArea) {
+        openOrHideSearchContent()
+      }
+    }
+
+    document.querySelector("#search-icon").addEventListener("click", openOrHideSearchContent, false)
+    document.querySelector("#search-close-icon").addEventListener("click", openOrHideSearchContent, false)
+    searchOverlayArea.addEventListener("click", blurSearchContent, false)
+
+    var searchFunc = function (path, search_id, content_id) {
+      'use strict';
+      var $input = document.getElementById(search_id);
+      var $resultContent = document.getElementById(content_id);
+      $resultContent.innerHTML = "<ul><span class='local-search-empty'>First search, index file loading, please wait...<span></ul>";
+      $.ajax({
+        // 0x01. load xml file
+        url: path,
+        dataType: "xml",
+        success: function (xmlResponse) {
+          // 0x02. parse xml file
+          var datas = $("entry", xmlResponse).map(function () {
+            return {
+              title: $("title", this).text(),
+              content: $("content", this).text(),
+              url: $("url", this).text()
+            };
+          }).get();
+          $resultContent.innerHTML = "";
+
+          $input.addEventListener('input', function () {
+            // 0x03. parse query to keywords list
+            var str = '<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length <= 0) {
+              return;
+            }
+            // 0x04. perform local searching
+            datas.forEach(function (data) {
+              var isMatch = true;
+              var content_index = [];
+              if (!data.title || data.title.trim() === '') {
+                data.title = "Untitled";
+              }
+              var orig_data_title = data.title.trim();
+              var data_title = orig_data_title.toLowerCase();
+              var orig_data_content = data.content.trim().replace(/<[^>]+>/g, "");
+              var data_content = orig_data_content.toLowerCase();
+              var data_url = data.url;
+              var index_title = -1;
+              var index_content = -1;
+              var first_occur = -1;
+              // only match artiles with not empty contents
+              if (data_content !== '') {
+                keywords.forEach(function (keyword, i) {
+                  index_title = data_title.indexOf(keyword);
+                  index_content = data_content.indexOf(keyword);
+
+                  if (index_title < 0 && index_content < 0) {
+                    isMatch = false;
+                  } else {
+                    if (index_content < 0) {
+                      index_content = 0;
+                    }
+                    if (i == 0) {
+                      first_occur = index_content;
+                    }
+                    // content_index.push({index_content:index_content, keyword_len:keyword_len});
+                  }
+                });
+              } else {
+                isMatch = false;
+              }
+              // 0x05. show search results
+              if (isMatch) {
+                str += "<li><a href='" + data_url + "' class='search-result-title'>" + orig_data_title + "</a>";
+                var content = orig_data_content;
+                if (first_occur >= 0) {
+                  // cut out 100 characters
+                  var start = first_occur - 20;
+                  var end = first_occur + 80;
+
+                  if (start < 0) {
+                    start = 0;
+                  }
+
+                  if (start == 0) {
+                    end = 100;
+                  }
+
+                  if (end > content.length) {
+                    end = content.length;
+                  }
+
+                  var match_content = content.substr(start, end);
+
+                  // highlight all keywords
+                  keywords.forEach(function (keyword) {
+                    var regS = new RegExp(keyword, "gi");
+                    match_content = match_content.replace(regS, "<span class=\"search-keyword\">" + keyword + "</span>");
+                  });
+
+                  str += "<p class=\"search-result-abstract\">" + match_content + "...</p>"
+                }
+                str += "</li>";
+              }
+            });
+            str += "</ul>";
+            if (str.indexOf('<li>') === -1) {
+              return $resultContent.innerHTML = "<ul><span class='local-search-empty'>No result<span></ul>";
+            }
+            $resultContent.innerHTML = str;
+          });
+        },
+        error: function(xhr, status, error) {
+          $resultContent.innerHTML = ""
+          if (xhr.status === 404) {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The search.xml file was not found, please refer to：<a href='https://github.com/zchengsite/hexo-theme-oranges#configuration' target='_black'>configuration</a><span></ul>";
+          } else {
+            $resultContent.innerHTML = "<ul><span class='local-search-empty'>The request failed, Try to refresh the page or try again later.<span></ul>";
+          }
+        }
+      });
+      $(document).on('click', '#search-close-icon', function() {
+        $('#search-input').val('');
+        $('#search-result').html('');
+      });
+    }
+
+    var getSearchFile = function() {
+        var path = "/search.xml";
+        searchFunc(path, 'search-input', 'search-result');
+    }
+  </script>
+
+
+
+
+    </div>
+  </body>
+</html>
