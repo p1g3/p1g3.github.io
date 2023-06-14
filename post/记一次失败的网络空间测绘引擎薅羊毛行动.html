@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x00 前言规则列表 - 网络空间测绘，网络空间安全搜索引擎，网络空间搜索引擎，安全态势感知 - FOFA网络空间测绘系统 得知 Fofa 有累计 32万左右的指纹规则集：  于是开始想着咋样能把这些规则薅过来，有一个办法是先获取到每个产品对应的 query，然后对命中的网站进行聚类分析，这样能减少许多工作量，于是开始准备第一步，获取所有产品对应的 query。 0x01 失败的尝试在网站下方可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次失败的网络空间测绘引擎薅羊毛行动">
+<meta property="og:url" content="https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html">
+<meta property="og:site_name" content="___">
+<meta property="og:description" content="0x00 前言规则列表 - 网络空间测绘，网络空间安全搜索引擎，网络空间搜索引擎，安全态势感知 - FOFA网络空间测绘系统 得知 Fofa 有累计 32万左右的指纹规则集：  于是开始想着咋样能把这些规则薅过来，有一个办法是先获取到每个产品对应的 query，然后对命中的网站进行聚类分析，这样能减少许多工作量，于是开始准备第一步，获取所有产品对应的 query。 0x01 失败的尝试在网站下方可">
+<meta property="og:locale">
+<meta property="og:image" content="https://p.ipic.vip/9hn3ix.png">
+<meta property="og:image" content="https://p.ipic.vip/ph5czi.png">
+<meta property="og:image" content="https://p.ipic.vip/eenky2.png">
+<meta property="og:image" content="https://p.ipic.vip/zpgdh7.png">
+<meta property="og:image" content="https://p.ipic.vip/378nf2.png">
+<meta property="og:image" content="https://p.ipic.vip/c366an.png">
+<meta property="og:image" content="https://p.ipic.vip/xvskc2.png">
+<meta property="article:published_time" content="2023-06-14T16:39:35.000Z">
+<meta property="article:modified_time" content="2023-06-14T17:01:33.561Z">
+<meta property="article:author" content="p1g3">
+<meta property="article:tag" content="脑洞大开">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p.ipic.vip/9hn3ix.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>记一次失败的网络空间测绘引擎薅羊毛行动</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/post/Nacos-JRaft-Hessian-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%86%E6%9E%90.html"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&text=记一次失败的网络空间测绘引擎薅羊毛行动"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&title=记一次失败的网络空间测绘引擎薅羊毛行动"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&is_video=false&description=记一次失败的网络空间测绘引擎薅羊毛行动"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=记一次失败的网络空间测绘引擎薅羊毛行动&body=Check out this article: https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&title=记一次失败的网络空间测绘引擎薅羊毛行动"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&title=记一次失败的网络空间测绘引擎薅羊毛行动"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&title=记一次失败的网络空间测绘引擎薅羊毛行动"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&title=记一次失败的网络空间测绘引擎薅羊毛行动"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&name=记一次失败的网络空间测绘引擎薅羊毛行动&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&t=记一次失败的网络空间测绘引擎薅羊毛行动"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E5%A4%B1%E8%B4%A5%E7%9A%84%E5%B0%9D%E8%AF%95"><span class="toc-number">2.</span> <span class="toc-text">0x01 失败的尝试</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        记一次失败的网络空间测绘引擎薅羊毛行动
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">p1g3</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-06-14T16:39:35.000Z" class="dt-published" itemprop="datePublished">2023-06-15</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E8%84%91%E6%B4%9E%E5%A4%A7%E5%BC%80/" rel="tag">脑洞大开</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p><a target="_blank" rel="noopener" href="https://fofa.info/library">规则列表 - 网络空间测绘，网络空间安全搜索引擎，网络空间搜索引擎，安全态势感知 - FOFA网络空间测绘系统</a> 得知 Fofa 有累计 32万左右的指纹规则集：</p>
+<p><img src="https://p.ipic.vip/9hn3ix.png" alt="image-20230615004257272"></p>
+<p>于是开始想着咋样能把这些规则薅过来，有一个办法是先获取到每个产品对应的 query，然后对命中的网站进行聚类分析，这样能减少许多工作量，于是开始准备第一步，获取所有产品对应的 query。</p>
+<h2 id="0x01-失败的尝试"><a href="#0x01-失败的尝试" class="headerlink" title="0x01 失败的尝试"></a>0x01 失败的尝试</h2><p>在网站下方可以看到 Fofa 已经对所有产品进行了一个概括性的分类：</p>
+<p><img src="https://p.ipic.vip/ph5czi.png" alt="image-20230615004448438"></p>
+<p>点击某个 Tab 就会跳转到查询页面：</p>
+<p><img src="https://p.ipic.vip/eenky2.png" alt="image-20230615004537973"></p>
+<p>点击查看更多可以获得更多的产品以及其对应的 query：</p>
+<p><img src="https://p.ipic.vip/zpgdh7.png" alt="image-20230615004607835"></p>
+<p>于是开始抓包分析：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">GET /v1/rules/categories?cid=10579&amp;keyword=&amp;page=1&amp;size=10&amp;ts=1686761038776&amp;sign=pZSYgHM8tSCbGltzIn9D3yLTmAD4JJ0HJAg8TtwHtvljJ1VZOJg9FnXY2zfKM5l%2FkhFqjy5lJik8tsSHAU%2FjhB26h38ys7NmVveZ%2FT6MoVvLm25uRlSsdNL1RcEEd%2F8iIbu3N3g%2BXbEOPR%2Fq11lKNldqiavMuf%2BVvnDDcXmtoSfLKidFxKs5VY6cCKueVKtYmVTc0tf%2F85Wa4J4%2FvchIaDFpcfGfJPAizdBKBQr72o8Ax5nRN4Jw0gTl98%2FZpCE5jLZJJVITN%2Bjjc8lFtcY9%2BhiktVS%2Blr9gpJJxvBSWRyTLLS5sE8ich%2FD6S00IXplZ8Yktn1Ky2Dm%2BFvSsKCKzSg%3D%3D&amp;app_id=9e9fb94330d97833acfbc041ee1a76793f1bc691 HTTP/1.1</span><br><span class="line">Host: api.fofa.info</span><br><span class="line">Sec-Ch-Ua: &quot;Not.A/Brand&quot;;v=&quot;8&quot;, &quot;Chromium&quot;;v=&quot;114&quot;, &quot;Google Chrome&quot;;v=&quot;114&quot;</span><br><span class="line">Accept: application/json, text/plain, */*</span><br><span class="line">Sec-Ch-Ua-Mobile: ?0</span><br><span class="line">Authorization: &lt;auth&gt;</span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36</span><br><span class="line">Sec-Ch-Ua-Platform: &quot;macOS&quot;</span><br><span class="line">Origin: https://fofa.info</span><br><span class="line">Sec-Fetch-Site: same-site</span><br><span class="line">Sec-Fetch-Mode: cors</span><br><span class="line">Sec-Fetch-Dest: empty</span><br><span class="line">Referer: https://fofa.info/</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7</span><br><span class="line">Connection: close</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>整个包由两个部分组成，请求的 Query 以及身份认证用的 Authorization，其中 Query 里的 sign 用于签名校验，因此还需要逆一下签名算法才能自己构造请求发包。</p>
+<p>前端 js 只经过压缩没有混淆，可以比较轻松的找到加密代码：</p>
+<p><img src="https://p.ipic.vip/378nf2.png" alt="image-20230615004822927"></p>
+<p>sortFun 用于加密，代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span>(<span class="params">e</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> t = <span class="variable language_">arguments</span>.<span class="property">length</span> &gt; <span class="number">1</span> &amp;&amp; <span class="keyword">void</span> <span class="number">0</span> !== <span class="variable language_">arguments</span>[<span class="number">1</span>] ? <span class="variable language_">arguments</span>[<span class="number">1</span>] : <span class="string">&quot;&quot;</span></span><br><span class="line">      , n = &#123;&#125;</span><br><span class="line">      , o = &#123;&#125;;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> a <span class="keyword">in</span> e)</span><br><span class="line">        <span class="title class_">String</span>(e[a]) &amp;&amp; (n[a] = e[a]);</span><br><span class="line">    <span class="title class_">Object</span>.<span class="title function_">keys</span>(n).<span class="title function_">sort</span>().<span class="title function_">map</span>((<span class="keyword">function</span>(<span class="params">e</span>) &#123;</span><br><span class="line">        o[e] = n[e]</span><br><span class="line">    &#125;</span><br><span class="line">    ));</span><br><span class="line">    <span class="keyword">var</span> i = <span class="string">&quot;&quot;</span>;</span><br><span class="line">    <span class="title class_">Object</span>.<span class="title function_">keys</span>(o).<span class="title function_">map</span>((<span class="keyword">function</span>(<span class="params">e</span>) &#123;</span><br><span class="line">        i += <span class="string">&quot;&quot;</span>.<span class="title function_">concat</span>(e).<span class="title function_">concat</span>(o[e])</span><br><span class="line">    &#125;</span><br><span class="line">    ));</span><br><span class="line">    <span class="keyword">var</span> r = <span class="title class_">Zo</span>.<span class="title function_">createSign</span>(<span class="string">&quot;RSA-SHA256&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> r.<span class="title function_">update</span>(i),</span><br><span class="line">    r.<span class="title function_">sign</span>(t, <span class="string">&quot;base64&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>加密逻辑也比较清晰，先是走 RSA-SHA256，然后通过 base64 加密，加密之前做了个简单的排序，按照这个逻辑可以写一个 Go 的加密代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">genSign</span><span class="params">(s []<span class="type">byte</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">	hashed := sha256.Sum256(s)</span><br><span class="line">	privateKeyPEM := []<span class="type">byte</span>(<span class="string">&quot;-----BEGIN RSA PRIVATE KEY-----\r\nMIIEogIBAAKCAQEAv0xjefuBTF6Ox940ZqLLUFFBDtTcB9dAfDjWgyZ2A55K+VdG\r\nc1L5LqJWuyRkhYGFTlI4K5hRiExvjXuwIEed1norp5cKdeTLJwmvPyFgaEh7Ow19\r\nTu9sTR5hHxThjT8ieArB2kNAdp8Xoo7O8KihmBmtbJ1umRv2XxG+mm2ByPZFlTdW\r\nRFU38oCPkGKlrl/RzOJKRYMv10s1MWBPY6oYkRiOX/EsAUVae6zKRqNR2Q4HzJV8\r\ngOYMPvqkau8hwN8i6r0z0jkDGCRJSW9djWk3Byi3R2oSdZ0IoS+91MFtKvWYdnNH\r\n2Ubhlnu1P+wbeuIFdp2u7ZQOtgPX0mtQ263e5QIDAQABAoIBAD67GwfeTMkxXNr3\r\n5/EcQ1XEP3RQoxLDKHdT4CxDyYFoQCfB0e1xcRs0ywI1be1FyuQjHB5Xpazve8lG\r\nnTwIoB68E2KyqhB9BY14pIosNMQduKNlygi/hKFJbAnYPBqocHIy/NzJHvOHOiXp\r\ndL0AX3VUPkWW3rTAsar9U6aqcFvorMJQ2NPjijcXA0p1MlZAZKODO2wqidfQ487h\r\nxy0ZkriYVi419j83a1cCK0QocXiUUeQM6zRNgQv7LCmrFo2X4JEzlujEveqvsDC4\r\nMBRgkK2lNH+AFuRwOEr4PIlk9rrpHA4O1V13P3hJpH5gxs5oLLM1CWWG9YWLL44G\r\nzD9Tm8ECgYEA8NStMXyAmHLYmd2h0u5jpNGbegf96z9s/RnCVbNHmIqh/pbXizcv\r\nmMeLR7a0BLs9eiCpjNf9hob/JCJTms6SmqJ5NyRMJtZghF6YJuCSO1MTxkI/6RUw\r\nmrygQTiF8RyVUlEoNJyhZCVWqCYjctAisEDaBRnUTpNn0mLvEXgf1pUCgYEAy1kE\r\nd0YqGh/z4c/D09crQMrR/lvTOD+LRMf9lH+SkScT0GzdNIT5yuscRwKsnE6SpC5G\r\nySJFVhCnCBsQqq+ohsrXt8a99G7ePTMSAGK3QtC7QS3liDmvPBk6mJiLrKiRAZos\r\nvgPg7nTP8VuF0ZIKzkdWbGoMyNxVFZXovQ8BYxECgYBvCR9xGX4Qy6KiDlV18wNu\r\nElYkxVqFBBE0AJRg/u+bnQ9jWhi2zxLa1eWZgtss80c876I8lbkGNWedOVZioatm\r\nMFLC4bFalqyZWyO7iP7i60LKvfDJfkOSlDUu3OikahFOiqyG1VBz4+M4U500alIU\r\nAVKD14zTTZMopQSkgUXsoQKBgHd8RgiD3Qde0SJVv97BZzP6OWw5rqI1jHMNBK72\r\nSzwpdxYYcd6DaHfYsNP0+VIbRUVdv9A95/oLbOpxZNi2wNL7a8gb6tAvOT1Cvggl\r\n+UM0fWNuQZpLMvGgbXLu59u7bQFBA5tfkhLr5qgOvFIJe3n8JwcrRXndJc26OXil\r\n0Y3RAoGAJOqYN2CD4vOs6CHdnQvyn7ICc41ila/H49fjsiJ70RUD1aD8nYuosOnj\r\nwbG6+eWekyLZ1RVEw3eRF+aMOEFNaK6xKjXGMhuWj3A9xVw9Fauv8a2KBU42Vmcd\r\nt4HRyaBPCQQsIoErdChZj8g7DdxWheuiKoN4gbfK4W1APCcuhUA=\r\n-----END RSA PRIVATE KEY-----&quot;</span>)</span><br><span class="line">	block, _ := pem.Decode(privateKeyPEM)</span><br><span class="line">	privateKey, _ := x509.ParsePKCS1PrivateKey(block.Bytes)</span><br><span class="line"></span><br><span class="line">	signature, _ := rsa.SignPKCS1v15(rand.Reader, privateKey, crypto.SHA256, hashed[:])</span><br><span class="line">	<span class="keyword">return</span> base64.StdEncoding.EncodeToString(signature)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">genTimestampStr</span><span class="params">()</span></span> <span class="type">string</span> &#123;</span><br><span class="line">	now := time.Now()</span><br><span class="line">	unixMilli := now.UnixNano() / <span class="type">int64</span>(time.Millisecond)</span><br><span class="line">	<span class="keyword">return</span> fmt.Sprintf(<span class="string">&quot;%d&quot;</span>, unixMilli)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">generateData</span><span class="params">(params <span class="keyword">map</span>[<span class="type">string</span>]<span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">	<span class="comment">// 对参数按照字典序排序</span></span><br><span class="line">	keys := <span class="built_in">make</span>([]<span class="type">string</span>, <span class="number">0</span>, <span class="built_in">len</span>(params))</span><br><span class="line">	<span class="keyword">for</span> k := <span class="keyword">range</span> params &#123;</span><br><span class="line">		keys = <span class="built_in">append</span>(keys, k)</span><br><span class="line">	&#125;</span><br><span class="line">	sort.Strings(keys)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 拼接所有参数的字符串形式</span></span><br><span class="line">	<span class="keyword">var</span> buf bytes.Buffer</span><br><span class="line">	<span class="keyword">for</span> _, k := <span class="keyword">range</span> keys &#123;</span><br><span class="line">		v := fmt.Sprintf(<span class="string">&quot;%v&quot;</span>, params[k])</span><br><span class="line">		<span class="keyword">if</span> v != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">			buf.WriteString(k)</span><br><span class="line">			buf.WriteString(v)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> buf.String()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  arguments := <span class="keyword">map</span>[<span class="type">string</span>]<span class="type">string</span>&#123;<span class="string">&quot;cid&quot;</span>: <span class="string">&quot;10579&quot;</span>, <span class="string">&quot;keyword&quot;</span>: <span class="string">&quot;&quot;</span>, <span class="string">&quot;page&quot;</span>: <span class="string">&quot;1&quot;</span>, <span class="string">&quot;size&quot;</span>: <span class="string">&quot;10&quot;</span>, <span class="string">&quot;ts&quot;</span>: genTimestampStr()&#125;</span><br><span class="line">	fmt.Println(genSign([]<span class="type">byte</span>(generateData(arguments))))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解决了 sign 的问题之后就可以尝试爬虫了，写了个比较简单的体验逻辑，没有做递归：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;bytes&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/rand&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/rsa&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/sha256&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/x509&quot;</span></span><br><span class="line">	<span class="string">&quot;encoding/base64&quot;</span></span><br><span class="line">	<span class="string">&quot;encoding/json&quot;</span></span><br><span class="line">	<span class="string">&quot;encoding/pem&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;sort&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">genSign</span><span class="params">(s []<span class="type">byte</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">	hashed := sha256.Sum256(s)</span><br><span class="line">	privateKeyPEM := []<span class="type">byte</span>(<span class="string">&quot;-----BEGIN RSA PRIVATE KEY-----\r\nMIIEogIBAAKCAQEAv0xjefuBTF6Ox940ZqLLUFFBDtTcB9dAfDjWgyZ2A55K+VdG\r\nc1L5LqJWuyRkhYGFTlI4K5hRiExvjXuwIEed1norp5cKdeTLJwmvPyFgaEh7Ow19\r\nTu9sTR5hHxThjT8ieArB2kNAdp8Xoo7O8KihmBmtbJ1umRv2XxG+mm2ByPZFlTdW\r\nRFU38oCPkGKlrl/RzOJKRYMv10s1MWBPY6oYkRiOX/EsAUVae6zKRqNR2Q4HzJV8\r\ngOYMPvqkau8hwN8i6r0z0jkDGCRJSW9djWk3Byi3R2oSdZ0IoS+91MFtKvWYdnNH\r\n2Ubhlnu1P+wbeuIFdp2u7ZQOtgPX0mtQ263e5QIDAQABAoIBAD67GwfeTMkxXNr3\r\n5/EcQ1XEP3RQoxLDKHdT4CxDyYFoQCfB0e1xcRs0ywI1be1FyuQjHB5Xpazve8lG\r\nnTwIoB68E2KyqhB9BY14pIosNMQduKNlygi/hKFJbAnYPBqocHIy/NzJHvOHOiXp\r\ndL0AX3VUPkWW3rTAsar9U6aqcFvorMJQ2NPjijcXA0p1MlZAZKODO2wqidfQ487h\r\nxy0ZkriYVi419j83a1cCK0QocXiUUeQM6zRNgQv7LCmrFo2X4JEzlujEveqvsDC4\r\nMBRgkK2lNH+AFuRwOEr4PIlk9rrpHA4O1V13P3hJpH5gxs5oLLM1CWWG9YWLL44G\r\nzD9Tm8ECgYEA8NStMXyAmHLYmd2h0u5jpNGbegf96z9s/RnCVbNHmIqh/pbXizcv\r\nmMeLR7a0BLs9eiCpjNf9hob/JCJTms6SmqJ5NyRMJtZghF6YJuCSO1MTxkI/6RUw\r\nmrygQTiF8RyVUlEoNJyhZCVWqCYjctAisEDaBRnUTpNn0mLvEXgf1pUCgYEAy1kE\r\nd0YqGh/z4c/D09crQMrR/lvTOD+LRMf9lH+SkScT0GzdNIT5yuscRwKsnE6SpC5G\r\nySJFVhCnCBsQqq+ohsrXt8a99G7ePTMSAGK3QtC7QS3liDmvPBk6mJiLrKiRAZos\r\nvgPg7nTP8VuF0ZIKzkdWbGoMyNxVFZXovQ8BYxECgYBvCR9xGX4Qy6KiDlV18wNu\r\nElYkxVqFBBE0AJRg/u+bnQ9jWhi2zxLa1eWZgtss80c876I8lbkGNWedOVZioatm\r\nMFLC4bFalqyZWyO7iP7i60LKvfDJfkOSlDUu3OikahFOiqyG1VBz4+M4U500alIU\r\nAVKD14zTTZMopQSkgUXsoQKBgHd8RgiD3Qde0SJVv97BZzP6OWw5rqI1jHMNBK72\r\nSzwpdxYYcd6DaHfYsNP0+VIbRUVdv9A95/oLbOpxZNi2wNL7a8gb6tAvOT1Cvggl\r\n+UM0fWNuQZpLMvGgbXLu59u7bQFBA5tfkhLr5qgOvFIJe3n8JwcrRXndJc26OXil\r\n0Y3RAoGAJOqYN2CD4vOs6CHdnQvyn7ICc41ila/H49fjsiJ70RUD1aD8nYuosOnj\r\nwbG6+eWekyLZ1RVEw3eRF+aMOEFNaK6xKjXGMhuWj3A9xVw9Fauv8a2KBU42Vmcd\r\nt4HRyaBPCQQsIoErdChZj8g7DdxWheuiKoN4gbfK4W1APCcuhUA=\r\n-----END RSA PRIVATE KEY-----&quot;</span>)</span><br><span class="line">	block, _ := pem.Decode(privateKeyPEM)</span><br><span class="line">	privateKey, _ := x509.ParsePKCS1PrivateKey(block.Bytes)</span><br><span class="line"></span><br><span class="line">	signature, _ := rsa.SignPKCS1v15(rand.Reader, privateKey, crypto.SHA256, hashed[:])</span><br><span class="line">	<span class="keyword">return</span> base64.StdEncoding.EncodeToString(signature)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">genTimestampStr</span><span class="params">()</span></span> <span class="type">string</span> &#123;</span><br><span class="line">	now := time.Now()</span><br><span class="line">	unixMilli := now.UnixNano() / <span class="type">int64</span>(time.Millisecond)</span><br><span class="line">	<span class="keyword">return</span> fmt.Sprintf(<span class="string">&quot;%d&quot;</span>, unixMilli)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">generateData</span><span class="params">(params <span class="keyword">map</span>[<span class="type">string</span>]<span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">	<span class="comment">// 对参数按照字典序排序</span></span><br><span class="line">	keys := <span class="built_in">make</span>([]<span class="type">string</span>, <span class="number">0</span>, <span class="built_in">len</span>(params))</span><br><span class="line">	<span class="keyword">for</span> k := <span class="keyword">range</span> params &#123;</span><br><span class="line">		keys = <span class="built_in">append</span>(keys, k)</span><br><span class="line">	&#125;</span><br><span class="line">	sort.Strings(keys)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 拼接所有参数的字符串形式</span></span><br><span class="line">	<span class="keyword">var</span> buf bytes.Buffer</span><br><span class="line">	<span class="keyword">for</span> _, k := <span class="keyword">range</span> keys &#123;</span><br><span class="line">		v := fmt.Sprintf(<span class="string">&quot;%v&quot;</span>, params[k])</span><br><span class="line">		<span class="keyword">if</span> v != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">			buf.WriteString(k)</span><br><span class="line">			buf.WriteString(v)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> buf.String()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Response <span class="keyword">struct</span> &#123;</span><br><span class="line">	Code    <span class="type">int</span>    <span class="string">`json:&quot;code&quot;`</span></span><br><span class="line">	Message <span class="type">string</span> <span class="string">`json:&quot;message&quot;`</span></span><br><span class="line">	Data    <span class="keyword">struct</span> &#123;</span><br><span class="line">		Categories []<span class="keyword">struct</span> &#123;</span><br><span class="line">			ID    <span class="type">int</span>    <span class="string">`json:&quot;id&quot;`</span></span><br><span class="line">			Name  <span class="type">string</span> <span class="string">`json:&quot;name&quot;`</span></span><br><span class="line">			Total <span class="type">int</span>    <span class="string">`json:&quot;total&quot;`</span></span><br><span class="line">			Rules []<span class="keyword">struct</span> &#123;</span><br><span class="line">				Name <span class="type">string</span> <span class="string">`json:&quot;name&quot;`</span></span><br><span class="line">				Code <span class="type">string</span> <span class="string">`json:&quot;code&quot;`</span></span><br><span class="line">			&#125; <span class="string">`json:&quot;rules&quot;`</span></span><br><span class="line">		&#125; <span class="string">`json:&quot;categories&quot;`</span></span><br><span class="line">		Total <span class="type">int</span> <span class="string">`json:&quot;total&quot;`</span></span><br><span class="line">		Page  <span class="keyword">struct</span> &#123;</span><br><span class="line">			Num   <span class="type">int</span> <span class="string">`json:&quot;num&quot;`</span></span><br><span class="line">			Size  <span class="type">int</span> <span class="string">`json:&quot;size&quot;`</span></span><br><span class="line">			Total <span class="type">int</span> <span class="string">`json:&quot;total&quot;`</span></span><br><span class="line">		&#125; <span class="string">`json:&quot;page&quot;`</span></span><br><span class="line">	&#125; <span class="string">`json:&quot;data&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">SaveCategoriesData</span><span class="params">(response Response)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> _, category := <span class="keyword">range</span> response.Data.Categories &#123;</span><br><span class="line">		<span class="keyword">for</span> _, rule := <span class="keyword">range</span> category.Rules &#123;</span><br><span class="line">			<span class="comment">// 追加写入到 rules.txt 文件中</span></span><br><span class="line">			f, _ := os.OpenFile(<span class="string">&quot;rules.txt&quot;</span>, os.O_APPEND|os.O_CREATE|os.O_WRONLY, <span class="number">0644</span>)</span><br><span class="line">			<span class="keyword">defer</span> f.Close()</span><br><span class="line">			f.WriteString(rule.Name + <span class="string">&quot;:::&quot;</span> + rule.Code + <span class="string">&quot;\n&quot;</span>)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	auth := <span class="string">&quot;&lt;auth&gt;&quot;</span></span><br><span class="line"></span><br><span class="line">	arguments := <span class="keyword">map</span>[<span class="type">string</span>]<span class="type">string</span>&#123;<span class="string">&quot;cid&quot;</span>: <span class="string">&quot;10579&quot;</span>, <span class="string">&quot;keyword&quot;</span>: <span class="string">&quot;&quot;</span>, <span class="string">&quot;page&quot;</span>: <span class="string">&quot;1&quot;</span>, <span class="string">&quot;size&quot;</span>: <span class="string">&quot;10&quot;</span>, <span class="string">&quot;ts&quot;</span>: genTimestampStr()&#125;</span><br><span class="line">	firstReq, _ := http.NewRequest(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;https://api.fofa.info/v1/rules/categories?cid=&quot;</span>+arguments[<span class="string">&quot;cid&quot;</span>]+<span class="string">&quot;&amp;keyword=&amp;page=1&amp;size=10&amp;ts=&quot;</span>+arguments[<span class="string">&quot;ts&quot;</span>]+<span class="string">&quot;&amp;sign=&quot;</span>+genSign([]<span class="type">byte</span>(generateData(arguments)))+<span class="string">&quot;&amp;app_id=9e9fb94330d97833acfbc041ee1a76793f1bc691&quot;</span>, <span class="literal">nil</span>)</span><br><span class="line">	firstReq.Header.Add(<span class="string">&quot;Authorization&quot;</span>, auth)</span><br><span class="line">	httpResp, err := http.DefaultClient.Do(firstReq)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> resp Response</span><br><span class="line">	err = json.NewDecoder(httpResp.Body).Decode(&amp;resp)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	totalPage := resp.Data.Page.Total/resp.Data.Page.Size + <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">101</span>; i &lt;= totalPage; i++ &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;正在爬取第&quot;</span> + fmt.Sprintf(<span class="string">&quot;%d&quot;</span>, i) + <span class="string">&quot;页数据，总页数：&quot;</span> + fmt.Sprintf(<span class="string">&quot;%d&quot;</span>, totalPage))</span><br><span class="line">		arguments[<span class="string">&quot;page&quot;</span>] = fmt.Sprintf(<span class="string">&quot;%d&quot;</span>, i)</span><br><span class="line">		arguments[<span class="string">&quot;ts&quot;</span>] = genTimestampStr()</span><br><span class="line">		req, _ := http.NewRequest(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;https://api.fofa.info/v1/rules/categories?cid=&quot;</span>+arguments[<span class="string">&quot;cid&quot;</span>]+<span class="string">&quot;&amp;keyword=&amp;page=&quot;</span>+arguments[<span class="string">&quot;page&quot;</span>]+<span class="string">&quot;&amp;size=10&amp;ts=&quot;</span>+arguments[<span class="string">&quot;ts&quot;</span>]+<span class="string">&quot;&amp;sign=&quot;</span>+genSign([]<span class="type">byte</span>(generateData(arguments)))+<span class="string">&quot;&amp;app_id=9e9fb94330d97833acfbc041ee1a76793f1bc691&quot;</span>, <span class="literal">nil</span>)</span><br><span class="line">		req.Header.Add(<span class="string">&quot;Authorization&quot;</span>, auth)</span><br><span class="line">		httpResp, err := http.DefaultClient.Do(req)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">		content, _ := ioutil.ReadAll(httpResp.Body)</span><br><span class="line">		fmt.Println(<span class="type">string</span>(content))</span><br><span class="line"></span><br><span class="line">		err = json.NewDecoder(httpResp.Body).Decode(&amp;resp)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">		SaveCategoriesData(resp)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>爬虫也遇到了一些问题，比如会说频率太快，所以最后在每次请求前都加了：<code>time.Sleep(1 * time.Second)</code>。</p>
+<p>然后出现了第二个问题：</p>
+<p><img src="https://p.ipic.vip/c366an.png" alt="image-20230615005300983"></p>
+<p>在今年早些时候，FoFa 给每个账号都添加了每日请求限制，这个问题无解，只能通过添加更多的账号来爬更多的数据（单日）；过了十二点，我继续尝试，发现了另外的问题：</p>
+<p><img src="https://p.ipic.vip/xvskc2.png" alt="image-20230615005428148"></p>
+<p>当请求的 page 超过 100 时就会报权限不足的错误，这个问题更是无解，直接给这次的 “薅羊毛行动” 判了死刑，至此这次 “薅羊毛行动” 也落下了失败的帷幕。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">0x00 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E5%A4%B1%E8%B4%A5%E7%9A%84%E5%B0%9D%E8%AF%95"><span class="toc-number">2.</span> <span class="toc-text">0x01 失败的尝试</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&text=记一次失败的网络空间测绘引擎薅羊毛行动"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&title=记一次失败的网络空间测绘引擎薅羊毛行动"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&is_video=false&description=记一次失败的网络空间测绘引擎薅羊毛行动"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=记一次失败的网络空间测绘引擎薅羊毛行动&body=Check out this article: https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&title=记一次失败的网络空间测绘引擎薅羊毛行动"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&title=记一次失败的网络空间测绘引擎薅羊毛行动"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&title=记一次失败的网络空间测绘引擎薅羊毛行动"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&title=记一次失败的网络空间测绘引擎薅羊毛行动"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&name=记一次失败的网络空间测绘引擎薅羊毛行动&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://4ark.me/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html&t=记一次失败的网络空间测绘引擎薅羊毛行动"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    p1g3
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
