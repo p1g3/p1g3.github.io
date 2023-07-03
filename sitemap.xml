@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://exp.ci/2023/07/03/Smartbi-windowUnloading%20%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/</loc>
+    
+    <lastmod>2023-07-03</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://exp.ci/2023/06/17/Smartbi-%E5%86%85%E7%BD%AE%E7%94%A8%E6%88%B7%E7%99%BB%E9%99%86%E7%BB%95%E8%BF%87%E5%88%86%E6%9E%90/</loc>
     
     <lastmod>2023-06-17</lastmod>
@@ -49,7 +58,7 @@
 
   <url>
     <loc>https://exp.ci/</loc>
-    <lastmod>2023-06-18</lastmod>
+    <lastmod>2023-07-03</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -57,14 +66,14 @@
   
   <url>
     <loc>https://exp.ci/tags/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/</loc>
-    <lastmod>2023-06-18</lastmod>
+    <lastmod>2023-07-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://exp.ci/tags/%E8%84%91%E6%B4%9E%E5%A4%A7%E5%BC%80/</loc>
-    <lastmod>2023-06-18</lastmod>
+    <lastmod>2023-07-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
