@@ -3,30 +3,45 @@
 <script>
 const phoneNumberServer = new PhoneNumberServer();
 
-function getAuthToken() {
-        phoneNumberServer.getVerifyToken({
+function getToken(jwtToken, accessToken) {
+        phoneNumberServer.getLoginToken({
           // 成功回调
           success: function (res) {
             alert(JSON.stringify(res));
             document.write(JSON.stringify(res));
-            console.log("获取本机号码校验token成功", res);
-            // 本机号码校验. 可带上返回的spToken，用户输入的手机号，请求服务端，服务端调用VerifyPhoneWithToken API 进行本机号码校验；
+            // 一键登录: 可发请求到服务端调用 GetPhoneWithToken API, 获取用户手机号, 完成登录
           },
           // 失败回调
-          error: function (res) {
-            document.write('dd');
-            console.log("获取本机号码校验token失败", res);
+          error: function (res) {},
+          // 授权页状态监听函数
+          watch: function (status, data) {},
+          // 配置选项
+          authPageOption: {
+            navText: "一键登录",
+            subtitle: "", // 副标题
+            btnText: "立即登录",
+            agreeSymbol: "、",
+            showCustomView: true,
+            customView: {
+              element:
+                '<div class="btn_box other" onclick="clickEvent()">切换其他登录方式</div>',
+              style: ".btn_box.other{background: #fff; color: #f00}",
+              js: "function clickEvent(){alert(666666)}",
+            },
+            privacyBefore: "我已阅读并同意",
+            isDialog: true, // 是否是弹窗样式
+            manualClose: true, // 是否手动关闭弹窗/授权页
           },
         });
       }
 
-phoneNumberServer.checkAuthAvailable({
-  accessToken: "Zyt8U732FWts6qi75Frm/2JX0PitsJn7QkDXZPJ8k5XKWSG79K0EwaNPD3oYwq1v",
-  jwtToken: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjAyMjBfcG5zX3VuaXFfa2V5In0.eyJqdGkiOiIyMDZpWjBfdFI4THh6cjdXcU1fXy1nIiwiaWF0IjoxNzE0MTAzNDIxLCJleHAiOjE3MTQxMDcwMjEsIm5iZiI6MTcxNDEwMzM2MSwic3ViIjoiWU9VUl9TVUJKRUNUIiwiYXVkIjoiWU9VUl9BVURJRU5DRSIsImFsaVVpZCI6IjEwMTU2NDIyNTg3NzM2MDcifQ.EwBNbxXi0y5KqrFf68GMzaZO9Ju6FC-UGdmmRvPC-szia7ZPUNSL4gfPFcxzpzJAnqO9jW4nwRMZ5PGW3PGOO2pRuHWA3Qqjg2gUXSRjXGXZOeGp1p6sDsJ3HCjUzZ3UXfQn4AWDspl6hz5j8z60m9mfemfaz0Q6oJ_dGVGgSjygB-yCqtZEXOAjfWd6-jBhEvVEiFpVP6-tNrqI6QZsCH2by02PNHC4Fa2E-cHcu4nt9so1hUg1YjwE3j30xPK3sy844VSGYDf43g__LQCHdfAVdPRl3JqIGkKQA3iBiPnU_jTdRX9YbMkz_sm9v18uDNITjF8ZZMh8ekBCpi_G0A",
+phoneNumberServer.checkLoginAvailable({
+  accessToken: "Zyt8U732FWts6qi75Frm/2JX0PitsJn7zgTW/PQtG5b16VqkB0p7Z0gXObQahrSP",
+  jwtToken: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjAyMjBfcG5zX3VuaXFfa2V5In0.eyJqdGkiOiJrRll2RXBDVUpJdlA1b1FaYWNIUGZ3IiwiaWF0IjoxNzE0MTA2NTU5LCJleHAiOjE3MTQxMTAxNTksIm5iZiI6MTcxNDEwNjQ5OSwic3ViIjoiWU9VUl9TVUJKRUNUIiwiYXVkIjoiWU9VUl9BVURJRU5DRSIsImFsaVVpZCI6IjEwMTU2NDIyNTg3NzM2MDcifQ.O3OVMlnw5q_S28KKmqZ0TH-4JQ_MdSYDHAo3sRvcVEe4I2Dtp2Deldsp-k48hPYVXkEAavZfjj4HLh-EQPve63Umtgb4Y8Cqf7VGCWU9fQ4BiPO_xtzEqsqwOusFWtuR9qmvX_9qfU-ae8vzcjNOlJbaqc7o99UXu65nnrFDn8PJRfh6eHlj6ovU4enonmNAo7IcTWUHzl5DK6J-W6hbpRSwfq7837QGHUsnh1Cr3cH0chGqPhOSKZj-eobKr7CmaAT7d_QIqnlDq9uxVIY0OzZIKKCkU_y6md1K29_F0Z3iTRTFAEc-sWxFVe_e4hweLMOyM5aQP2dX1NuquIRMcw",
   success: function (res) {
     console.log(res);
     if (res.code === 600000) {
-      getAuthToken();
+      getToken();
     }
   },
 
