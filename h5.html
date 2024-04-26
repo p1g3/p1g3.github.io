@@ -7,7 +7,8 @@ function getAuthToken() {
         phoneNumberServer.getVerifyToken({
           // 成功回调
           success: function (res) {
-            document.write('bb');
+            alert(JSON.stringify(res));
+            document.write(JSON.stringify(res));
             console.log("获取本机号码校验token成功", res);
             // 本机号码校验. 可带上返回的spToken，用户输入的手机号，请求服务端，服务端调用VerifyPhoneWithToken API 进行本机号码校验；
           },
@@ -20,8 +21,8 @@ function getAuthToken() {
       }
 
 phoneNumberServer.checkAuthAvailable({
-  accessToken: "Zyt8U732FWts6qi75Frm/2JX0PitsJn7FCA30v98LxNviwKfJeUeKUnWSfIXK1LO",
-  jwtToken: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjAyMjBfcG5zX3VuaXFfa2V5In0.eyJqdGkiOiJiTEs3Z2RjRE1wc3NfZVlyX1JBanVnIiwiaWF0IjoxNzE0MTAzMTI5LCJleHAiOjE3MTQxMDY3MjksIm5iZiI6MTcxNDEwMzA2OSwic3ViIjoiWU9VUl9TVUJKRUNUIiwiYXVkIjoiWU9VUl9BVURJRU5DRSIsImFsaVVpZCI6IjEwMTU2NDIyNTg3NzM2MDcifQ.K2KOQXULmq-XCWN7Cjmq3-QC_oyr2_5dG8NuLdUdsZUp2qMcdfzPkIX9nLiDwlVHgByoS2-p5DOQsQVDTJoVaV07iwgaatI9xsdpvTMCUtM_YLkC2lJPJQ3ydu8lrUE_U3icH1XAAFR8iIZdCgaOZ91ApJkpRoEDvatT_bxu7gN-U_4tUMurxy_tsTuxbFrF8_Gnw6bfFzAFMSj_an_iWUM_GSGiU0YCnO8LJvXNelCevS4V9CAy800TyUGO46gU0mPuA9zshF9QH8gA1lZB6jPU8Aeq8LJW7e2qEyFAnB8fnxp2qpBAkjVbnfKwBoWpBUpb7k3FFgdRCbfssZ2Cbw",
+  accessToken: "Zyt8U732FWts6qi75Frm/2JX0PitsJn7QkDXZPJ8k5XKWSG79K0EwaNPD3oYwq1v",
+  jwtToken: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjAyMjBfcG5zX3VuaXFfa2V5In0.eyJqdGkiOiIyMDZpWjBfdFI4THh6cjdXcU1fXy1nIiwiaWF0IjoxNzE0MTAzNDIxLCJleHAiOjE3MTQxMDcwMjEsIm5iZiI6MTcxNDEwMzM2MSwic3ViIjoiWU9VUl9TVUJKRUNUIiwiYXVkIjoiWU9VUl9BVURJRU5DRSIsImFsaVVpZCI6IjEwMTU2NDIyNTg3NzM2MDcifQ.EwBNbxXi0y5KqrFf68GMzaZO9Ju6FC-UGdmmRvPC-szia7ZPUNSL4gfPFcxzpzJAnqO9jW4nwRMZ5PGW3PGOO2pRuHWA3Qqjg2gUXSRjXGXZOeGp1p6sDsJ3HCjUzZ3UXfQn4AWDspl6hz5j8z60m9mfemfaz0Q6oJ_dGVGgSjygB-yCqtZEXOAjfWd6-jBhEvVEiFpVP6-tNrqI6QZsCH2by02PNHC4Fa2E-cHcu4nt9so1hUg1YjwE3j30xPK3sy844VSGYDf43g__LQCHdfAVdPRl3JqIGkKQA3iBiPnU_jTdRX9YbMkz_sm9v18uDNITjF8ZZMh8ekBCpi_G0A",
   success: function (res) {
     console.log(res);
     if (res.code === 600000) {
