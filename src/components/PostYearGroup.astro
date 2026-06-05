@@ -1,0 +1,41 @@
+---
+import type { BlogPostEntry } from '../lib/posts';
+import { formatShortDate } from '../lib/date';
+import PostList from './PostList.astro';
+
+interface Props {
+	year: number;
+	posts: BlogPostEntry[];
+	idPrefix?: string;
+}
+
+const { year, posts, idPrefix = 'post-year' } = Astro.props;
+const headingId = `${idPrefix}-${year}`;
+---
+
+<section class="post-year-group" aria-labelledby={headingId}>
+	<h2 id={headingId}>{year}</h2>
+	<PostList posts={posts} dateFormatter={formatShortDate} />
+</section>
+
+<style>
+	.post-year-group {
+		margin-top: calc(var(--space-page) * 1.6);
+	}
+
+	.post-year-group:first-of-type {
+		margin-top: 0;
+	}
+
+	.post-year-group h2 {
+		margin: 0 0 21px;
+		color: var(--color-section-heading);
+		font-size: 2rem;
+		font-weight: 700;
+		line-height: normal;
+	}
+
+	.post-year-group :global(.post-list-row:first-child) {
+		margin-top: 0;
+	}
+</style>

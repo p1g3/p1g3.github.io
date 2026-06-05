@@ -1,0 +1,52 @@
+---
+import type { ImageMetadata } from 'astro';
+import BaseHead from '../components/BaseHead.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+
+interface Props {
+	title: string;
+	description: string;
+	image?: ImageMetadata;
+	shell?: 'content' | 'page' | 'full';
+}
+
+const { title, description, image, shell = 'content' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={title} description={description} image={image} />
+	</head>
+	<body>
+		<SiteHeader />
+		<main class:list={['page-shell', `page-shell--${shell}`]}>
+			<slot />
+		</main>
+	</body>
+</html>
+
+<style>
+	.page-shell {
+		width: var(--width-content);
+		max-width: calc(100% - (var(--space-page) * 2));
+		margin: auto;
+		padding: clamp(0.75rem, 2.2vw, 1.5rem) 0;
+	}
+
+	.page-shell--page {
+		width: var(--width-page);
+	}
+
+	.page-shell--full {
+		width: calc(100% - (var(--space-page) * 2));
+		max-width: 100%;
+	}
+
+	@media (max-width: 720px) {
+		.page-shell {
+			max-width: calc(100% - 2rem);
+			padding: 1rem 0;
+		}
+	}
+</style>

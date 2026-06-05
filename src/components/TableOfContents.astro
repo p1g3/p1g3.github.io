@@ -1,0 +1,273 @@
+---
+interface Heading {
+	depth: number;
+	slug: string;
+	text: string;
+}
+
+interface Props {
+	headings?: Heading[];
+}
+
+const headings =
+	Astro.props.headings?.filter((heading) => heading.depth === 2 || heading.depth === 3) ?? [];
+
+const groups = headings.reduce<Array<Heading & { children: Heading[] }>>((acc, heading) => {
+	if (heading.depth === 2) {
+		acc.push({ ...heading, children: [] });
+		return acc;
+	}
+
+	acc.at(-1)?.children.push(heading);
+	return acc;
+}, []);
+---
+
+{
+	groups.length > 0 && (
+		<nav class="toc" aria-label="Table of Contents">
+			<div class="toc__title">Table of Contents</div>
+			<ol class="toc__list">
+				{groups.map((heading) => (
+					<li class="toc__group" data-toc-group={heading.slug}>
+						<a
+							href={`#${heading.slug}`}
+							title={heading.text}
+							data-depth={heading.depth}
+							data-toc-link={heading.slug}
+							data-toc-parent={heading.slug}
+						>
+							{heading.text}
+						</a>
+						{heading.children.length > 0 && (
+							<div class="toc__children">
+								<ol class="toc__children-list">
+									{heading.children.map((child) => (
+										<li>
+											<a
+												href={`#${child.slug}`}
+												title={child.text}
+												data-depth={child.depth}
+												data-toc-link={child.slug}
+												data-toc-parent={heading.slug}
+											>
+												{child.text}
+											</a>
+										</li>
+									))}
+								</ol>
+							</div>
+						)}
+					</li>
+				))}
+			</ol>
+		</nav>
+	)
+}
+
+<script>
+	const tocLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
+	const tocGroups = Array.from(document.querySelectorAll<HTMLElement>('[data-toc-group]'));
+	const headings = tocLinks
+		.map((link) => {
+			const slug = link.dataset.tocLink;
+			const heading = slug ? document.getElementById(slug) : null;
+			return heading ? { heading, link } : null;
+		})
+		.filter((item): item is { heading: HTMLElement; link: HTMLAnchorElement } => Boolean(item));
+
+	const setActiveLink = (slug: string, expandGroup = true) => {
+		const activeLink = tocLinks.find((link) => link.dataset.tocLink === slug);
+		const activeParent = activeLink?.dataset.tocParent;
+
+		for (const link of tocLinks) {
+			link.classList.toggle('active', link.dataset.tocLink === slug);
+		}
+
+		for (const group of tocGroups) {
+			group.classList.toggle('expanded', expandGroup && group.dataset.tocGroup === activeParent);
+		}
+	};
+
+	if (headings.length > 0) {
+		const getHashSlug = () => {
+			const rawHash = window.location.hash.slice(1);
+
+			if (!rawHash) {
+				return null;
+			}
+
+			let decodedHash = rawHash;
+
+			try {
+				decodedHash = decodeURIComponent(rawHash);
+			} catch {
+				decodedHash = rawHash;
+			}
+
+			const hashHeading = headings.find(
+				({ heading }) => heading.id === rawHash || heading.id === decodedHash,
+			);
+
+			return hashHeading?.heading.id ?? null;
+		};
+
+		const updateActiveLink = (expandGroup = true, preferHash = false) => {
+			const anchorOffset = 64;
+			const hashSlug = getHashSlug();
+			const isAtPageEnd =
+				window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+
+			if (preferHash && hashSlug) {
+				setActiveLink(hashSlug, expandGroup);
+				return;
+			}
+
+			if (isAtPageEnd) {
+				setActiveLink(headings.at(-1)?.heading.id ?? headings[0].heading.id, expandGroup);
+				return;
+			}
+
+			let activeHeading = headings[0].heading;
+
+			for (const { heading } of headings) {
+				if (heading.getBoundingClientRect().top <= anchorOffset) {
+					activeHeading = heading;
+				} else {
+					break;
+				}
+			}
+
+			setActiveLink(activeHeading.id, expandGroup);
+		};
+
+		let frame = 0;
+		const requestUpdate = () => {
+			window.cancelAnimationFrame(frame);
+			frame = window.requestAnimationFrame(() => updateActiveLink(true));
+		};
+
+		updateActiveLink(Boolean(window.location.hash) || window.scrollY > 20, Boolean(window.location.hash));
+		window.addEventListener('scroll', requestUpdate, { passive: true });
+		window.addEventListener('hashchange', () => {
+			window.setTimeout(() => updateActiveLink(true, true), 120);
+		});
+
+		for (const link of tocLinks) {
+			link.addEventListener('click', () => {
+				const parent = link.dataset.tocParent;
+				for (const group of tocGroups) {
+					group.classList.toggle('expanded', group.dataset.tocGroup === parent);
+				}
+				window.setTimeout(() => updateActiveLink(true, true), 120);
+			});
+		}
+	}
+</script>
+
+<style>
+	.toc {
+		position: sticky;
+		top: 2rem;
+		max-height: calc(100vh - 4rem);
+		overflow-x: hidden;
+		overflow-y: auto;
+		padding: 0.95rem;
+		border: 1px solid color-mix(in srgb, var(--color-border), transparent 25%);
+		border-radius: var(--radius-md);
+		background: color-mix(in srgb, var(--color-background), transparent 2%);
+		color: var(--color-muted);
+		font-size: 0.9rem;
+		line-height: 1.45;
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+	}
+
+	.toc::-webkit-scrollbar {
+		display: none;
+	}
+
+	.toc__title {
+		margin-bottom: 0.85rem;
+		padding-bottom: 0.75rem;
+		border-bottom: 1px solid color-mix(in srgb, var(--color-border), transparent 35%);
+		color: var(--color-text);
+		font-size: 1rem;
+		font-weight: 700;
+		letter-spacing: 0;
+	}
+
+	.toc__list {
+		display: grid;
+		gap: 0.15rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		min-width: 0;
+	}
+
+	.toc li,
+	.toc__group {
+		min-width: 0;
+	}
+
+	.toc__children {
+		display: none;
+	}
+
+	.toc__group.expanded .toc__children {
+		display: block;
+		animation: slideDown 0.3s ease-in-out;
+	}
+
+	.toc__children-list {
+		display: grid;
+		gap: 0.1rem;
+		min-width: 0;
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		list-style: none;
+	}
+
+	.toc a {
+		display: block;
+		overflow: hidden;
+		width: 100%;
+		min-width: 0;
+		padding: 0.36rem 0.55rem;
+		border-radius: var(--radius-sm);
+		color: var(--color-muted);
+		text-decoration: none;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.toc a[data-depth='3'] {
+		padding-left: 1.55rem;
+		font-size: 0.84rem;
+	}
+
+	.toc a:hover,
+	.toc a.active {
+		background: color-mix(in srgb, var(--color-accent), transparent 90%);
+		color: var(--color-accent);
+	}
+
+	.toc a.active {
+		box-shadow: inset 2px 0 0 currentColor;
+		font-weight: 700;
+	}
+
+	@keyframes slideDown {
+		0% {
+			opacity: 0;
+			transform: translateY(-5px);
+		}
+
+		100% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+</style>

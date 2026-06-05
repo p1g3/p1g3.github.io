@@ -1,0 +1,36 @@
+---
+interface Props {
+	id?: string;
+	as?: 'h1' | 'h2' | 'h3';
+}
+
+const { id, as = 'h2' } = Astro.props;
+const Tag = as;
+---
+
+<Tag id={id} class="section-heading">
+	<slot />
+</Tag>
+
+<style>
+	.section-heading {
+		position: relative;
+		display: inline-block;
+		margin: 0;
+		padding-bottom: 0.6rem;
+		color: var(--color-text);
+		font-size: var(--font-size-section-heading);
+		font-weight: 700;
+		line-height: normal;
+	}
+
+	.section-heading::after {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		height: 2px;
+		background: var(--color-accent);
+		content: '';
+	}
+</style>

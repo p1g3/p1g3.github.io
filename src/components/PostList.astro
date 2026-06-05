@@ -1,0 +1,37 @@
+---
+import type { BlogPostEntry } from '../lib/posts';
+import { formatIsoDate } from '../lib/date';
+import { getPostHref } from '../lib/routes';
+import PostListRow from './PostListRow.astro';
+
+interface Props {
+	posts: BlogPostEntry[];
+	dateFormatter?: (date: Date) => string;
+}
+
+const { posts, dateFormatter = formatIsoDate } = Astro.props;
+---
+
+<ul class="post-list">
+	{
+		posts.map((post) => (
+			<PostListRow
+				href={getPostHref(post.id)}
+				title={post.data.title}
+				category={post.data.category}
+				dateTime={post.data.pubDate}
+				dateLabel={dateFormatter(post.data.pubDate)}
+			/>
+		))
+	}
+</ul>
+
+<style>
+	.post-list {
+		display: grid;
+		gap: 0;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+</style>

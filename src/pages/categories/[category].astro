@@ -1,0 +1,39 @@
+---
+import PostYearGroup from '../../components/PostYearGroup.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { getAllPosts, getPostsByCategory, groupPostsByYear } from '../../lib/posts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+	const posts = await getAllPosts();
+	const categories = Array.from(new Set(posts.map((post) => post.data.category)));
+
+	return categories.map((category) => ({
+		params: { category },
+		props: {
+			category,
+			posts: getPostsByCategory(posts, category),
+		},
+	}));
+}
+
+const { category, posts } = Astro.props;
+const categoryGroups = groupPostsByYear(posts);
+---
+
+<BaseLayout title={`${category} - ${SITE_TITLE}`} description={SITE_DESCRIPTION} shell="page">
+	<section class="category-posts" aria-labelledby="category-title">
+		<h1 id="category-title" class="sr-only">{category}</h1>
+		{
+			categoryGroups.map((yearGroup) => (
+				<PostYearGroup year={yearGroup.year} posts={yearGroup.posts} idPrefix="category-year" />
+			))
+		}
+	</section>
+</BaseLayout>
+
+<style>
+	.category-posts {
+		width: 100%;
+	}
+</style>

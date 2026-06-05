@@ -1,0 +1,77 @@
+---
+interface Props {
+	href: string;
+	title: string;
+	category: string;
+	dateTime: Date;
+	dateLabel: string;
+}
+
+const { href, title, category, dateTime, dateLabel } = Astro.props;
+---
+
+<li class="post-list-row">
+	<time datetime={dateTime.toISOString()}>{dateLabel}</time>
+	<a class="post-list-row__title" href={href}>{title}</a>
+	<span class="post-list-row__category">{category}</span>
+</li>
+
+<style>
+	.post-list-row {
+		display: grid;
+		grid-template-columns: var(--post-list-date-width, 8.5rem) minmax(0, 1fr) var(--post-list-category-column-width, 8rem);
+		align-items: center;
+		column-gap: 1.75rem;
+		margin: 12px 0;
+		font-size: 1.2rem;
+		line-height: 1.35;
+	}
+
+	.post-list-row time {
+		color: var(--color-link);
+		white-space: nowrap;
+	}
+
+	.post-list-row__title {
+		min-width: 0;
+		overflow: hidden;
+		color: var(--color-link);
+		text-decoration: none;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.post-list-row__title:hover {
+		color: var(--color-accent);
+		text-decoration: underline;
+	}
+
+	.post-list-row__category {
+		display: block;
+		justify-self: end;
+		width: var(--post-list-category-width, 7.25rem);
+		padding: 3px 0;
+		border: 2px solid var(--color-border-strong);
+		border-radius: var(--radius-category-pill);
+		color: var(--color-link);
+		font-size: 0.8rem;
+		font-weight: 700;
+		line-height: 1.2;
+		text-align: center;
+	}
+
+	@media (max-width: 560px) {
+		.post-list-row {
+			grid-template-columns: 1fr;
+			gap: 0.15rem;
+		}
+
+		.post-list-row__title {
+			white-space: normal;
+		}
+
+		.post-list-row__category {
+			display: none;
+		}
+	}
+</style>

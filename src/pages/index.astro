@@ -1,0 +1,70 @@
+---
+import EmptyState from '../components/EmptyState.astro';
+import PostList from '../components/PostList.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { formatIsoDate } from '../lib/date';
+import { getSortedPosts, RECENT_POST_LIMIT } from '../lib/posts';
+import { ARCHIVE_PATH } from '../lib/routes';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const posts = await getSortedPosts();
+const recentPosts = posts.slice(0, RECENT_POST_LIMIT);
+const hasMorePosts = posts.length > recentPosts.length;
+---
+
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+	<section class="recent-posts" aria-label="近期文章">
+		{
+			recentPosts.length > 0 ? (
+				<>
+				<div class="recent-posts__header">
+					<SectionHeading id="recent-posts-title">近期文章</SectionHeading>
+				</div>
+				<PostList posts={recentPosts} dateFormatter={formatIsoDate} />
+				{
+					hasMorePosts && (
+						<div class="recent-posts__footer">
+							<a class="text-link recent-posts__more" href={ARCHIVE_PATH}>查看更多</a>
+						</div>
+					)
+				}
+				</>
+			) : (
+				<EmptyState
+					title="近期还没有文章"
+					description="草稿箱已经打开，等第一篇文章落笔。"
+					command="find posts -type f"
+				/>
+			)
+		}
+	</section>
+</BaseLayout>
+
+<style>
+	.recent-posts {
+		width: 100%;
+	}
+
+	.recent-posts__header {
+		margin-bottom: 1.6rem;
+	}
+
+	.recent-posts__footer {
+		display: flex;
+		justify-content: flex-end;
+		margin-top: 1.4rem;
+	}
+
+	.recent-posts__more {
+		display: inline-flex;
+		align-items: center;
+		font-size: 1rem;
+	}
+
+	@media (max-width: 560px) {
+		.recent-posts__header {
+			margin-bottom: 1.2rem;
+		}
+	}
+</style>

@@ -1,0 +1,28 @@
+---
+import { GISCUS } from '../consts';
+---
+
+<section class="comments" aria-label="评论">
+	<script
+		is:inline
+		src="https://giscus.app/client.js"
+		data-repo={GISCUS.repo}
+		data-repo-id={GISCUS.repoId}
+		data-category={GISCUS.category}
+		data-category-id={GISCUS.categoryId}
+		data-mapping={GISCUS.mapping}
+		data-strict={GISCUS.strict}
+		data-reactions-enabled={GISCUS.reactionsEnabled}
+		data-emit-metadata={GISCUS.emitMetadata}
+		data-input-position={GISCUS.inputPosition}
+		data-theme={GISCUS.theme}
+		data-lang={GISCUS.lang}
+		crossorigin="anonymous"
+		async></script>
+</section>
+
+<style>
+	.comments {
+		margin-top: var(--space-page);
+	}
+</style>

@@ -1,0 +1,125 @@
+---
+interface AdjacentPost {
+	title: string;
+	href: string;
+}
+
+interface Props {
+	previousPost?: AdjacentPost;
+	nextPost?: AdjacentPost;
+}
+
+const { previousPost, nextPost } = Astro.props;
+const hasAdjacentPosts = Boolean(previousPost || nextPost);
+---
+
+<nav class="post-nav" aria-label="文章导航">
+	<a class="post-nav__top" href="#top">您已读完，点此回到顶部</a>
+	<div class="post-nav__rule" aria-hidden="true"></div>
+	{
+		hasAdjacentPosts && (
+			<div class="post-nav__links">
+				{previousPost ? (
+					<a class="post-nav__link post-nav__link--previous" href={previousPost.href}>
+						<span class="post-nav__label">上一篇：</span>
+						<span class="post-nav__title">{previousPost.title}</span>
+					</a>
+				) : (
+					<span class="post-nav__placeholder" aria-hidden="true" />
+				)}
+				{nextPost ? (
+					<a class="post-nav__link post-nav__link--next" href={nextPost.href}>
+						<span class="post-nav__label">下一篇：</span>
+						<span class="post-nav__title">{nextPost.title}</span>
+					</a>
+				) : (
+					<span class="post-nav__placeholder" aria-hidden="true" />
+				)}
+			</div>
+		)
+	}
+</nav>
+
+<style>
+	.post-nav {
+		margin-top: calc(var(--space-page) * 2);
+		font-size: 1.05rem;
+		line-height: 1.4;
+	}
+
+	.post-nav__top {
+		display: block;
+		margin-bottom: 0.35rem;
+		color: var(--color-action-link);
+		text-align: right;
+		text-decoration: none;
+	}
+
+	.post-nav__top:hover {
+		color: var(--color-action-link);
+		text-decoration: underline;
+	}
+
+	.post-nav__rule {
+		border-top: 1px solid var(--color-border-strong);
+	}
+
+	.post-nav__links {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: var(--space-page);
+		padding-top: 0.45rem;
+	}
+
+	.post-nav__link {
+		display: flex;
+		min-width: 0;
+		color: var(--color-text);
+		text-decoration: none;
+	}
+
+	.post-nav__link:hover {
+		color: var(--color-accent);
+		text-decoration: none;
+	}
+
+	.post-nav__link--next {
+		justify-content: flex-end;
+		text-align: right;
+	}
+
+	.post-nav__label {
+		flex: 0 0 auto;
+	}
+
+	.post-nav__title {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	@media (max-width: 720px) {
+		.post-nav {
+			font-size: 1rem;
+		}
+
+		.post-nav__top {
+			text-align: left;
+		}
+
+		.post-nav__links {
+			grid-template-columns: 1fr;
+			gap: 0.65rem;
+		}
+
+		.post-nav__link--next {
+			justify-content: flex-start;
+			text-align: left;
+		}
+
+		.post-nav__placeholder {
+			display: none;
+		}
+	}
+</style>

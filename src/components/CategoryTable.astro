@@ -1,0 +1,56 @@
+---
+import type { CategorySummary } from '../lib/posts';
+import { formatIsoDate } from '../lib/date';
+import { getCategoryHref } from '../lib/routes';
+
+interface Props {
+	categories: CategorySummary[];
+}
+
+const { categories } = Astro.props;
+---
+
+<div class="category-table">
+	<table>
+		<thead>
+			<tr>
+				<th>Category</th>
+				<th>Last Updated Date</th>
+				<th>Count</th>
+			</tr>
+		</thead>
+		<tbody>
+			{
+				categories.map((category) => (
+					<tr>
+						<td>
+							<a href={getCategoryHref(category.name)}>{category.name}</a>
+						</td>
+						<td>
+							<time datetime={category.latestDate.toISOString()}>
+								{formatIsoDate(category.latestDate)}
+							</time>
+						</td>
+						<td>{category.count}</td>
+					</tr>
+				))
+			}
+		</tbody>
+	</table>
+</div>
+
+<style>
+	.category-table {
+		width: 100%;
+		overflow-x: auto;
+	}
+
+	.category-table table {
+		min-width: 34rem;
+		margin: 0;
+	}
+
+	.category-table td:nth-child(3) {
+		width: 7rem;
+	}
+</style>

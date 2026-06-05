@@ -1,0 +1,37 @@
+---
+import { type CollectionEntry, render } from 'astro:content';
+import BlogPost from '../../layouts/BlogPost.astro';
+import { getAdjacentPosts, getAllPosts } from '../../lib/posts';
+import { getPostHref } from '../../lib/routes';
+
+export async function getStaticPaths() {
+	const posts = await getAllPosts();
+
+	return posts.map((post) => ({
+		params: { slug: post.id },
+		props: {
+			post,
+			...getAdjacentPosts(posts, post.id),
+		},
+	}));
+}
+type AdjacentPost = Pick<CollectionEntry<'blog'>, 'id' | 'data'>;
+
+type Props = {
+	post: CollectionEntry<'blog'>;
+	previousPost?: AdjacentPost;
+	nextPost?: AdjacentPost;
+};
+
+const { post, previousPost, nextPost } = Astro.props;
+const { Content, headings } = await render(post);
+---
+
+<BlogPost
+	{...post.data}
+	headings={headings}
+	previousPost={previousPost && { title: previousPost.data.title, href: getPostHref(previousPost.id) }}
+	nextPost={nextPost && { title: nextPost.data.title, href: getPostHref(nextPost.id) }}
+>
+	<Content />
+</BlogPost>

@@ -1,0 +1,32 @@
+---
+import CategoryTable from '../../components/CategoryTable.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { getAllPosts, getCategorySummaries } from '../../lib/posts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const categories = getCategorySummaries(await getAllPosts());
+---
+
+<BaseLayout title={`分类 - ${SITE_TITLE}`} description={SITE_DESCRIPTION} shell="page">
+	<section class="categories" aria-labelledby="categories-title">
+		<h1 id="categories-title" class="sr-only">分类</h1>
+		{
+			categories.length > 0 ? (
+				<CategoryTable categories={categories} />
+			) : (
+				<EmptyState
+					title="分类还没有生成"
+					description="等第一篇文章发布后，这里会自动长出分类索引。"
+					command="group posts by category"
+				/>
+			)
+		}
+	</section>
+</BaseLayout>
+
+<style>
+	.categories {
+		width: 100%;
+	}
+</style>
