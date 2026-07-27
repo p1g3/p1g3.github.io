@@ -1,25 +1,82 @@
 ---
 import { GISCUS } from '../consts';
+
+interface Props {
+	defer?: boolean;
+}
+
+const { defer = false } = Astro.props;
 ---
 
-<section class="comments" aria-label="评论">
-	<script
-		is:inline
-		src="https://giscus.app/client.js"
-		data-repo={GISCUS.repo}
-		data-repo-id={GISCUS.repoId}
-		data-category={GISCUS.category}
-		data-category-id={GISCUS.categoryId}
-		data-mapping={GISCUS.mapping}
-		data-strict={GISCUS.strict}
-		data-reactions-enabled={GISCUS.reactionsEnabled}
-		data-emit-metadata={GISCUS.emitMetadata}
-		data-input-position={GISCUS.inputPosition}
-		data-theme={GISCUS.theme}
-		data-lang={GISCUS.lang}
-		crossorigin="anonymous"
-		async></script>
+<section
+	class="comments"
+	aria-label="评论"
+	data-giscus-comments
+	data-giscus-deferred={defer ? 'true' : 'false'}
+	data-repo={GISCUS.repo}
+	data-repo-id={GISCUS.repoId}
+	data-category={GISCUS.category}
+	data-category-id={GISCUS.categoryId}
+	data-mapping={GISCUS.mapping}
+	data-strict={GISCUS.strict}
+	data-reactions-enabled={GISCUS.reactionsEnabled}
+	data-emit-metadata={GISCUS.emitMetadata}
+	data-input-position={GISCUS.inputPosition}
+	data-theme={GISCUS.theme}
+	data-lang={GISCUS.lang}
+>
 </section>
+
+<script>
+	const mountGiscus = (container: HTMLElement) => {
+		if (container.dataset.giscusMounted === 'true') {
+			return;
+		}
+
+		container.dataset.giscusMounted = 'true';
+
+		const script = document.createElement('script');
+		script.src = 'https://giscus.app/client.js';
+		script.async = true;
+		script.crossOrigin = 'anonymous';
+
+		for (const attribute of [
+			'repo',
+			'repo-id',
+			'category',
+			'category-id',
+			'mapping',
+			'strict',
+			'reactions-enabled',
+			'emit-metadata',
+			'input-position',
+			'theme',
+			'lang',
+		]) {
+			const value = container.getAttribute(`data-${attribute}`);
+
+			if (value !== null) {
+				script.setAttribute(`data-${attribute}`, value);
+			}
+		}
+
+		container.append(script);
+	};
+
+	for (const container of document.querySelectorAll<HTMLElement>('[data-giscus-comments]')) {
+		if (container.dataset.giscusDeferred !== 'true') {
+			mountGiscus(container);
+		}
+	}
+
+	document.addEventListener('blog:content-unlocked', () => {
+		for (const container of document.querySelectorAll<HTMLElement>(
+			'[data-giscus-comments][data-giscus-deferred="true"]',
+		)) {
+			mountGiscus(container);
+		}
+	});
+</script>
 
 <style>
 	.comments {

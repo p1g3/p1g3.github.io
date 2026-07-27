@@ -21,6 +21,7 @@ const { posts, dateFormatter = formatIsoDate } = Astro.props;
 				category={post.data.category}
 				dateTime={post.data.pubDate}
 				dateLabel={dateFormatter(post.data.pubDate)}
+				protected={post.data.protected}
 			/>
 		))
 	}

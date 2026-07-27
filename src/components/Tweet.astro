@@ -1,0 +1,60 @@
+---
+interface Props {
+	url: string;
+	align?: 'left' | 'center' | 'right' | 'none';
+	theme?: 'light' | 'dark';
+	lang?: string;
+	hideThread?: boolean;
+	hideMedia?: boolean;
+	dnt?: boolean;
+}
+
+const {
+	url,
+	align = 'center',
+	theme = 'light',
+	lang = 'zh-cn',
+	hideThread = true,
+	hideMedia = false,
+	dnt = true,
+} = Astro.props;
+
+const allowedHosts = new Set([
+	'x.com',
+	'www.x.com',
+	'twitter.com',
+	'www.twitter.com',
+	'mobile.twitter.com',
+]);
+
+let parsedUrl: URL;
+
+try {
+	parsedUrl = new URL(url);
+} catch {
+	throw new Error(`[Tweet] 无效的推文 URL：${url}`);
+}
+
+const statusMatch = parsedUrl.pathname.match(/^\/([^/]+)\/status\/(\d+)/);
+
+if (parsedUrl.protocol !== 'https:' || !allowedHosts.has(parsedUrl.hostname) || !statusMatch) {
+	throw new Error(`[Tweet] 仅支持 https://x.com/<user>/status/<id> 格式的推文 URL：${url}`);
+}
+
+const canonicalUrl = `https://x.com/${statusMatch[1]}/status/${statusMatch[2]}`;
+---
+
+<figure class="tweet-embed" data-tweet-embed>
+	<blockquote
+		class="twitter-tweet"
+		cite={canonicalUrl}
+		data-align={align}
+		data-theme={theme}
+		data-lang={lang}
+		data-dnt={dnt ? 'true' : 'false'}
+		data-conversation={hideThread ? 'none' : undefined}
+		data-cards={hideMedia ? 'hidden' : undefined}
+	>
+		<a href={canonicalUrl} rel="nofollow noopener noreferrer">在 X 上查看这条推文</a>
+	</blockquote>
+</figure>

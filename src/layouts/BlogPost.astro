@@ -2,9 +2,11 @@
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import Comments from '../components/Comments.astro';
+import PasswordGate from '../components/PasswordGate.astro';
 import PostNavigation from '../components/PostNavigation.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import { SITE_DESCRIPTION } from '../consts';
+import type { ProtectedPayload } from '../lib/protected-content';
 import BaseLayout from './BaseLayout.astro';
 
 interface Heading {
@@ -14,6 +16,9 @@ interface Heading {
 }
 
 type Props = CollectionEntry<'blog'>['data'] & {
+	articleId: string;
+	password?: string;
+	encryptedPayload?: ProtectedPayload;
 	headings?: Heading[];
 	previousPost?: {
 		title: string;
@@ -29,27 +34,50 @@ const {
 	title,
 	description = SITE_DESCRIPTION,
 	heroImage,
+	protected: isProtected,
+	articleId,
+	password,
+	encryptedPayload,
 	headings,
 	previousPost,
 	nextPost,
 } = Astro.props;
+
+if (isProtected && !password && !encryptedPayload) {
+	throw new Error(`[BlogPost] 密码文章 “${articleId}” 没有可用密文。`);
+}
+
+const pageDescription = isProtected ? '这是一篇密码保护文章。' : description;
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={pageDescription}>
 	<article class="post" id="top">
 		<div class="post-toc">
-			<TableOfContents headings={headings} />
+			<TableOfContents headings={isProtected ? undefined : headings} />
 		</div>
-		<div class="hero-image">
+		{!isProtected && <div class="hero-image">
 			{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-		</div>
+		</div>}
 		<div class="prose">
 			<div class="title">
 				<h1>{title}</h1>
 			</div>
-			<slot />
+			{
+				isProtected ? (
+					<PasswordGate {password} payload={encryptedPayload} {articleId}>
+						{heroImage && (
+							<div class="hero-image hero-image--protected">
+								<Image width={1020} height={510} src={heroImage} alt="" />
+							</div>
+						)}
+						<slot />
+					</PasswordGate>
+				) : (
+					<slot />
+				)
+			}
 			<PostNavigation previousPost={previousPost} nextPost={nextPost} />
-			<Comments />
+			<Comments defer={isProtected} />
 		</div>
 	</article>
 </BaseLayout>
@@ -57,9 +85,64 @@ const {
 <script>
 	import mediumZoom from 'medium-zoom';
 
-	mediumZoom('.prose img', {
+	interface TwitterWidgets {
+		load: (root?: HTMLElement | Document) => void;
+	}
+
+	interface TwitterApi {
+		ready?: (callback: () => void) => void;
+		widgets?: TwitterWidgets;
+	}
+
+	const zoomOptions = {
 		background: 'rgba(0, 0, 0, 0.72)',
 		margin: 24,
+	};
+
+	const attachZoom = (root: ParentNode = document) => {
+		const images = root.querySelectorAll<HTMLImageElement>('img:not(.medium-zoom-image)');
+
+		if (images.length > 0) {
+			mediumZoom(images, zoomOptions);
+		}
+	};
+
+	const getTwitterApi = () => (window as typeof window & { twttr?: TwitterApi }).twttr;
+
+	const renderTweets = (root: HTMLElement | Document = document) => {
+		if (!root.querySelector('blockquote.twitter-tweet')) {
+			return;
+		}
+
+		const render = () => getTwitterApi()?.widgets?.load(root);
+		const twitterApi = getTwitterApi();
+
+		if (twitterApi?.widgets) {
+			twitterApi.ready ? twitterApi.ready(render) : render();
+			return;
+		}
+
+		let script = document.querySelector<HTMLScriptElement>('#twitter-wjs');
+
+		if (!script) {
+			script = document.createElement('script');
+			script.id = 'twitter-wjs';
+			script.src = 'https://platform.twitter.com/widgets.js';
+			script.async = true;
+			document.head.append(script);
+		}
+
+		script.addEventListener('load', render, { once: true });
+	};
+
+	attachZoom(document.querySelector('.prose') ?? document);
+	renderTweets();
+
+	document.addEventListener('blog:content-unlocked', (event) => {
+		const customEvent = event as CustomEvent<{ root?: HTMLElement }>;
+		const root = customEvent.detail?.root ?? document;
+		attachZoom(root);
+		renderTweets(root);
 	});
 </script>
 
@@ -89,6 +172,10 @@ const {
 		margin: 0 auto;
 		border-radius: var(--radius-lg);
 		box-shadow: var(--shadow-soft);
+	}
+
+	.hero-image--protected {
+		margin-bottom: var(--prose-paragraph-gap);
 	}
 
 	.prose {

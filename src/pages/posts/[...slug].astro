@@ -1,8 +1,15 @@
 ---
 import { type CollectionEntry, render } from 'astro:content';
+import { getSecret } from 'astro:env/server';
 import BlogPost from '../../layouts/BlogPost.astro';
 import { getAdjacentPosts, getAllPosts } from '../../lib/posts';
+import { isProtectedPayload } from '../../lib/protected-content';
 import { getPostHref } from '../../lib/routes';
+
+const sealedPayloadModules = import.meta.glob('../../content/protected/*.json', {
+	eager: true,
+	import: 'default',
+});
 
 export async function getStaticPaths() {
 	const posts = await getAllPosts();
@@ -25,10 +32,39 @@ type Props = {
 
 const { post, previousPost, nextPost } = Astro.props;
 const { Content, headings } = await render(post);
+const passwordEnv = post.data.passwordEnv;
+const articlePassword = passwordEnv ? getSecret(passwordEnv) : undefined;
+const isSealingBuild = getSecret('BLOG_SEALING') === '1';
+const sealedPayloadName = post.data.sealedPayload;
+const sealedPayloadPath = sealedPayloadName
+	? `../../content/protected/${sealedPayloadName}.json`
+	: undefined;
+const sealedPayload = sealedPayloadPath ? sealedPayloadModules[sealedPayloadPath] : undefined;
+
+if (sealedPayloadName && !sealedPayload) {
+	throw new Error(`密码文章 “${post.id}” 缺少密文文件 ${sealedPayloadPath}`);
+}
+
+if (sealedPayload && !isProtectedPayload(sealedPayload)) {
+	throw new Error(`密码文章 “${post.id}” 的密文文件格式无效`);
+}
+
+if (passwordEnv && !isSealingBuild) {
+	throw new Error(`含明文的密码文章只能通过 pnpm seal-post 构建：${post.id}`);
+}
+
+if (post.data.protected && !articlePassword && !sealedPayload) {
+	throw new Error(
+		`密码文章 “${post.id}” 缺少构建密码或已封装密文`,
+	);
+}
 ---
 
 <BlogPost
 	{...post.data}
+	articleId={post.id}
+	password={articlePassword}
+	encryptedPayload={sealedPayload}
 	headings={headings}
 	previousPost={previousPost && { title: previousPost.data.title, href: getPostHref(previousPost.id) }}
 	nextPost={nextPost && { title: nextPost.data.title, href: getPostHref(nextPost.id) }}

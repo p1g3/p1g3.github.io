@@ -25,6 +25,11 @@ coverage/
 !.env.example
 .env.production
 
+# local plaintext sources for password-protected posts
+.private/
+*.seal-backup
+*.seal-next
+
 # editor files
 .vscode/
 

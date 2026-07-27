@@ -5,14 +5,22 @@ interface Props {
 	category: string;
 	dateTime: Date;
 	dateLabel: string;
+	protected?: boolean;
 }
 
-const { href, title, category, dateTime, dateLabel } = Astro.props;
+const { href, title, category, dateTime, dateLabel, protected: isProtected = false } = Astro.props;
 ---
 
 <li class="post-list-row">
 	<time datetime={dateTime.toISOString()}>{dateLabel}</time>
-	<a class="post-list-row__title" href={href}>{title}</a>
+	<a
+		class="post-list-row__title"
+		href={href}
+		aria-label={isProtected ? `${title}（密码保护）` : undefined}
+	>
+		<span class="post-list-row__title-text">{title}</span>
+		{isProtected && <span class="post-list-row__lock" aria-hidden="true">加密</span>}
+	</a>
 	<span class="post-list-row__category">{category}</span>
 </li>
 
@@ -43,7 +51,24 @@ const { href, title, category, dateTime, dateLabel } = Astro.props;
 
 	.post-list-row__title:hover {
 		color: var(--color-accent);
+		text-decoration: none;
+	}
+
+	.post-list-row__title:hover .post-list-row__title-text {
 		text-decoration: underline;
+		text-underline-offset: 0.18em;
+	}
+
+	.post-list-row__lock {
+		display: inline-block;
+		margin-left: 0.45rem;
+		padding: 0.08rem 0.3rem;
+		border: 1px solid currentColor;
+		border-radius: var(--radius-sm);
+		font-size: 0.62rem;
+		font-weight: 700;
+		line-height: 1.2;
+		vertical-align: 0.15em;
 	}
 
 	.post-list-row__category {

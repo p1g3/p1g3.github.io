@@ -9,6 +9,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "seal-post": "node scripts/seal-post.mjs",
     "astro": "astro"
   },
   "dependencies": {

@@ -11,7 +11,9 @@ export async function GET(context) {
 		site: context.site,
 		items: posts.map((post) => ({
 			...post.data,
-			description: post.data.description ?? SITE_DESCRIPTION,
+			description: post.data.protected
+				? '这是一篇密码保护文章。'
+				: (post.data.description ?? SITE_DESCRIPTION),
 			link: getPostHref(post.id),
 		})),
 	});
