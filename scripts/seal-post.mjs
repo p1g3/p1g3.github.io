@@ -1,10 +1,13 @@
 import { spawn } from 'node:child_process';
 import {
 	access,
+	cp,
 	mkdir,
+	mkdtemp,
 	readFile,
 	rename,
 	rm,
+	symlink,
 	writeFile,
 } from 'node:fs/promises';
 import path from 'node:path';
@@ -39,16 +42,20 @@ const exists = async (target) => {
 	}
 };
 
-const runAstroBuild = () =>
+const runAstroBuild = (buildRoot) =>
 	new Promise((resolve, reject) => {
-		const child = spawn(process.execPath, [astroBin, 'build'], {
-			cwd: projectRoot,
+		const child = spawn(
+			process.execPath,
+			[astroBin, 'build', '--config', 'astro.seal.config.mjs'],
+			{
+			cwd: buildRoot,
 			env: {
 				...process.env,
 				BLOG_SEALING: '1',
 			},
 			stdio: 'inherit',
-		});
+			},
+		);
 
 		child.once('error', reject);
 		child.once('exit', (code) => {
@@ -95,44 +102,92 @@ if (!inputArgument) {
 
 			if (!passwordEnv) {
 				fail('frontmatter 必须设置 passwordEnv: BLOG_PASSWORD_<NAME>');
-			} else if (!password || password.length < 12) {
-				fail(`环境变量 ${passwordEnv} 未设置，或密码少于 12 个字符`);
+			} else if (!password || password.length < 8) {
+				fail(`环境变量 ${passwordEnv} 未设置，或密码少于 8 个字符`);
 			} else if (/^sealedPayload:/m.test(frontmatterMatch[1])) {
 				fail('本机明文源文件不能设置 sealedPayload');
 			} else if (/^heroImage:/m.test(frontmatterMatch[1])) {
 				fail('当前封装流程不支持私密 heroImage；静态图片文件会独立公开');
 			} else {
-				const temporaryPost = path.join(contentRoot, `${slug}.mdx`);
 				const publicStub = path.join(contentRoot, `${slug}.md`);
-				const stubBackup = `${publicStub}.seal-backup`;
-				const stubNext = `${publicStub}.seal-next`;
 				const payloadFile = path.join(payloadRoot, `${slug}.json`);
 				const payloadBackup = `${payloadFile}.seal-backup`;
 				const payloadNext = `${payloadFile}.seal-next`;
-				const builtPage = path.join(projectRoot, 'dist', 'posts', slug, 'index.html');
 				const hadStub = await exists(publicStub);
 				const hadPayload = await exists(payloadFile);
+				const existingStub = hadStub ? await readFile(publicStub, 'utf8') : undefined;
 				const canReplaceStub =
-					!hadStub || /^sealedPayload:/m.test(await readFile(publicStub, 'utf8'));
+					!existingStub || /^sealedPayload:/m.test(existingStub);
 
-				if (await exists(temporaryPost)) {
-					fail(`目标已存在，拒绝覆盖：${temporaryPost}`);
-				} else if (!canReplaceStub) {
+				if (!canReplaceStub) {
 					fail(`拒绝覆盖非封装文章：${publicStub}`);
 				} else {
-					let installedStub = false;
 					let backedUpPayload = false;
 					let installedPayload = false;
+					let installedStub = false;
+					let buildRoot;
 
 					await mkdir(payloadRoot, { recursive: true });
 
-					if (hadStub) {
-						await rename(publicStub, stubBackup);
-					}
-
 					try {
-						await writeFile(temporaryPost, source, 'utf8');
-						await runAstroBuild();
+						buildRoot = await mkdtemp(
+							path.join(path.dirname(projectRoot), 'blog-seal-'),
+						);
+
+						for (const entry of [
+							'astro.config.mjs',
+							'package.json',
+							'public',
+							'src',
+							'tsconfig.json',
+						]) {
+							await cp(path.join(projectRoot, entry), path.join(buildRoot, entry), {
+								recursive: true,
+							});
+						}
+
+						await symlink(
+							path.join(projectRoot, 'node_modules'),
+							path.join(buildRoot, 'node_modules'),
+							'junction',
+						);
+						await writeFile(
+							path.join(buildRoot, 'astro.seal.config.mjs'),
+							[
+								"import baseConfig from './astro.config.mjs';",
+								'',
+								'export default {',
+								'  ...baseConfig,',
+								"  cacheDir: './.astro-seal-cache',",
+								'  vite: {',
+								'    ...baseConfig.vite,',
+								"    cacheDir: './.vite-seal-cache',",
+								'  },',
+								'};',
+								'',
+							].join('\n'),
+							'utf8',
+						);
+
+						const buildContentRoot = path.join(buildRoot, 'src', 'content', 'blog');
+						await Promise.all([
+							rm(path.join(buildContentRoot, `${slug}.md`), { force: true }),
+							rm(path.join(buildContentRoot, `${slug}.mdx`), { force: true }),
+						]);
+						await writeFile(
+							path.join(buildContentRoot, `${slug}${extension}`),
+							source,
+							'utf8',
+						);
+						await runAstroBuild(buildRoot);
+
+						const builtPage = path.join(
+							buildRoot,
+							'dist',
+							'posts',
+							slug,
+							'index.html',
+						);
 
 						const builtHtml = await readFile(builtPage, 'utf8');
 						const payloadMatch = builtHtml.match(
@@ -159,7 +214,6 @@ if (!inputArgument) {
 						const stub = `---\n${publicFrontmatter}\nsealedPayload: "${slug}"\n---\n`;
 
 						await writeFile(payloadNext, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
-						await writeFile(stubNext, stub, 'utf8');
 
 						if (hadPayload) {
 							await rename(payloadFile, payloadBackup);
@@ -168,10 +222,9 @@ if (!inputArgument) {
 
 						await rename(payloadNext, payloadFile);
 						installedPayload = true;
-						await rename(stubNext, publicStub);
+						await writeFile(publicStub, stub, 'utf8');
 						installedStub = true;
 						await Promise.allSettled([
-							rm(stubBackup, { force: true }),
 							rm(payloadBackup, { force: true }),
 						]);
 						process.stdout.write(
@@ -184,12 +237,12 @@ if (!inputArgument) {
 							].join('\n'),
 						);
 					} catch (error) {
-						if (installedStub && (await exists(publicStub))) {
-							await rm(publicStub, { force: true });
-						}
-
-						if (hadStub && (await exists(stubBackup))) {
-							await rename(stubBackup, publicStub);
+						if (installedStub) {
+							if (existingStub !== undefined) {
+								await writeFile(publicStub, existingStub, 'utf8');
+							} else {
+								await rm(publicStub, { force: true });
+							}
 						}
 
 						if (installedPayload && (await exists(payloadFile))) {
@@ -202,11 +255,16 @@ if (!inputArgument) {
 
 						throw error;
 					} finally {
-						await rm(temporaryPost, { force: true });
-						await rm(stubNext, { force: true });
 						await rm(payloadNext, { force: true });
-						await rm(stubBackup, { force: true });
 						await rm(payloadBackup, { force: true });
+
+						if (
+							buildRoot &&
+							path.dirname(buildRoot) === path.dirname(projectRoot) &&
+							path.basename(buildRoot).startsWith('blog-seal-')
+						) {
+							await rm(buildRoot, { recursive: true, force: true });
+						}
 					}
 				}
 			}

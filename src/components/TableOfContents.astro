@@ -9,87 +9,241 @@ interface Props {
 	headings?: Heading[];
 }
 
-const headings =
-	Astro.props.headings?.filter((heading) => heading.depth === 2 || heading.depth === 3) ?? [];
-
-const groups = headings.reduce<Array<Heading & { children: Heading[] }>>((acc, heading) => {
-	if (heading.depth === 2) {
-		acc.push({ ...heading, children: [] });
-		return acc;
-	}
-
-	acc.at(-1)?.children.push(heading);
-	return acc;
-}, []);
----
-
-{
-	groups.length > 0 && (
-		<nav class="toc" aria-label="Table of Contents">
-			<div class="toc__title">Table of Contents</div>
-			<ol class="toc__list">
-				{groups.map((heading) => (
-					<li class="toc__group" data-toc-group={heading.slug}>
-						<a
-							href={`#${heading.slug}`}
-							title={heading.text}
-							data-depth={heading.depth}
-							data-toc-link={heading.slug}
-							data-toc-parent={heading.slug}
-						>
-							{heading.text}
-						</a>
-						{heading.children.length > 0 && (
-							<div class="toc__children">
-								<ol class="toc__children-list">
-									{heading.children.map((child) => (
-										<li>
-											<a
-												href={`#${child.slug}`}
-												title={child.text}
-												data-depth={child.depth}
-												data-toc-link={child.slug}
-												data-toc-parent={heading.slug}
-											>
-												{child.text}
-											</a>
-										</li>
-									))}
-								</ol>
-							</div>
-						)}
-					</li>
-				))}
-			</ol>
-		</nav>
-	)
+interface TocSection extends Heading {
+	children: Heading[];
 }
 
+interface TocGroup extends Heading {
+	children: TocSection[];
+}
+
+const formatTopNumber = (index: number) => `0x${index.toString(16).padStart(2, '0').toUpperCase()}`;
+const formatSectionNumber = (groupIndex: number, sectionIndex: number) =>
+	`${groupIndex}.${sectionIndex + 1}`;
+const formatChildNumber = (groupIndex: number, sectionIndex: number, childIndex: number) =>
+	`${formatSectionNumber(groupIndex, sectionIndex)}.${childIndex + 1}`;
+
+const headings =
+	Astro.props.headings?.filter((heading) => heading.depth >= 2 && heading.depth <= 4) ?? [];
+
+const groups: TocGroup[] = [];
+let currentGroup: TocGroup | undefined;
+let currentSection: TocSection | undefined;
+
+for (const heading of headings) {
+	if (heading.depth === 2) {
+		currentGroup = { ...heading, children: [] };
+		groups.push(currentGroup);
+		currentSection = undefined;
+		continue;
+	}
+
+	if (heading.depth === 3 && currentGroup) {
+		currentSection = { ...heading, children: [] };
+		currentGroup.children.push(currentSection);
+		continue;
+	}
+
+	if (heading.depth === 4 && currentSection) {
+		currentSection.children.push(heading);
+	}
+}
+---
+
+<nav class="toc" aria-label="Table of Contents" data-toc hidden={groups.length === 0}>
+	<div class="toc__title">Table of Contents</div>
+	<ol class="toc__list" data-toc-list>
+		{groups.map((heading, groupIndex) => (
+			<li class="toc__group" data-toc-group={heading.slug}>
+				<a
+					href={`#${heading.slug}`}
+					title={heading.text}
+					data-depth={heading.depth}
+					data-toc-link={heading.slug}
+					data-toc-parent={heading.slug}
+				>
+					{formatTopNumber(groupIndex)} {heading.text}
+				</a>
+				{heading.children.length > 0 && (
+					<div class="toc__children">
+						<ol class="toc__children-list">
+							{heading.children.map((section, sectionIndex) => (
+								<li>
+									<a
+										href={`#${section.slug}`}
+										title={section.text}
+										data-depth={section.depth}
+										data-toc-link={section.slug}
+										data-toc-parent={heading.slug}
+									>
+										{formatSectionNumber(groupIndex, sectionIndex)} {section.text}
+									</a>
+									{section.children.length > 0 && (
+										<ol class="toc__grandchildren-list">
+											{section.children.map((child, childIndex) => (
+												<li>
+													<a
+														href={`#${child.slug}`}
+														title={child.text}
+														data-depth={child.depth}
+														data-toc-link={child.slug}
+														data-toc-parent={heading.slug}
+													>
+														{formatChildNumber(groupIndex, sectionIndex, childIndex)} {child.text}
+													</a>
+												</li>
+											))}
+										</ol>
+									)}
+								</li>
+							))}
+						</ol>
+					</div>
+				)}
+			</li>
+		))}
+	</ol>
+</nav>
+
 <script>
-	const tocLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
-	const tocGroups = Array.from(document.querySelectorAll<HTMLElement>('[data-toc-group]'));
-	const headings = tocLinks
-		.map((link) => {
-			const slug = link.dataset.tocLink;
-			const heading = slug ? document.getElementById(slug) : null;
-			return heading ? { heading, link } : null;
-		})
-		.filter((item): item is { heading: HTMLElement; link: HTMLAnchorElement } => Boolean(item));
+	const toc = document.querySelector<HTMLElement>('[data-toc]');
+	const tocList = toc?.querySelector<HTMLOListElement>('[data-toc-list]');
 
-	const setActiveLink = (slug: string, expandGroup = true) => {
-		const activeLink = tocLinks.find((link) => link.dataset.tocLink === slug);
-		const activeParent = activeLink?.dataset.tocParent;
+	const createLink = (heading: HTMLElement, parent: string, number: string) => {
+		const link = document.createElement('a');
+		link.href = `#${heading.id}`;
+		link.title = heading.textContent?.trim() ?? '';
+		link.textContent = `${number} ${link.title}`;
+		link.dataset.depth = heading.tagName.slice(1);
+		link.dataset.tocLink = heading.id;
+		link.dataset.tocParent = parent;
+		return link;
+	};
 
-		for (const link of tocLinks) {
-			link.classList.toggle('active', link.dataset.tocLink === slug);
-		}
+	const buildToc = (root: ParentNode) => {
+		if (!tocList || tocList.children.length > 0) return;
 
-		for (const group of tocGroups) {
-			group.classList.toggle('expanded', expandGroup && group.dataset.tocGroup === activeParent);
+		let currentGroup: HTMLLIElement | null = null;
+		let currentSection: HTMLLIElement | null = null;
+		let groupIndex = -1;
+		let sectionIndex = -1;
+		let childIndex = -1;
+		for (const heading of root.querySelectorAll<HTMLElement>('h2[id], h3[id], h4[id]')) {
+			if (heading.tagName === 'H2') {
+				groupIndex += 1;
+				sectionIndex = -1;
+				childIndex = -1;
+				currentGroup = document.createElement('li');
+				currentGroup.className = 'toc__group';
+				currentGroup.dataset.tocGroup = heading.id;
+				currentGroup.append(
+					createLink(heading, heading.id, `0x${groupIndex.toString(16).padStart(2, '0').toUpperCase()}`),
+				);
+				tocList.append(currentGroup);
+				currentSection = null;
+				continue;
+			}
+
+			if (!currentGroup) continue;
+
+			if (heading.tagName === 'H4') {
+				if (!currentSection) continue;
+				childIndex += 1;
+				let grandchildren = currentSection.querySelector<HTMLOListElement>(
+					'.toc__grandchildren-list',
+				);
+				if (!grandchildren) {
+					grandchildren = document.createElement('ol');
+					grandchildren.className = 'toc__grandchildren-list';
+					currentSection.append(grandchildren);
+				}
+
+				const item = document.createElement('li');
+				item.append(
+					createLink(
+						heading,
+						currentGroup.dataset.tocGroup ?? '',
+						`${groupIndex}.${sectionIndex + 1}.${childIndex + 1}`,
+					),
+				);
+				grandchildren.append(item);
+				continue;
+			}
+
+			sectionIndex += 1;
+			childIndex = -1;
+
+			let children = currentGroup.querySelector<HTMLOListElement>('.toc__children-list');
+			if (!children) {
+				const wrapper = document.createElement('div');
+				wrapper.className = 'toc__children';
+				children = document.createElement('ol');
+				children.className = 'toc__children-list';
+				wrapper.append(children);
+				currentGroup.append(wrapper);
+			}
+
+			const item = document.createElement('li');
+			item.append(
+				createLink(
+					heading,
+					currentGroup.dataset.tocGroup ?? '',
+					`${groupIndex}.${sectionIndex + 1}`,
+				),
+			);
+			children.append(item);
+			currentSection = item;
 		}
 	};
 
-	if (headings.length > 0) {
+	const scrollToHashHeading = (root: ParentNode) => {
+		const rawHash = window.location.hash.slice(1);
+		if (!rawHash) return;
+
+		let decodedHash = rawHash;
+		try {
+			decodedHash = decodeURIComponent(rawHash);
+		} catch {
+			decodedHash = rawHash;
+		}
+
+		const heading = document.getElementById(rawHash) ?? document.getElementById(decodedHash);
+		if (!heading || !root.contains(heading)) return;
+
+		window.requestAnimationFrame(() => heading.scrollIntoView({ block: 'start' }));
+	};
+
+	const activateToc = () => {
+		if (!toc || !tocList || toc.dataset.ready === 'true') return;
+
+		const tocLinks = Array.from(tocList.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
+		const tocGroups = Array.from(tocList.querySelectorAll<HTMLElement>('[data-toc-group]'));
+		const headings = tocLinks
+			.map((link) => {
+				const slug = link.dataset.tocLink;
+				const heading = slug ? document.getElementById(slug) : null;
+				return heading ? { heading, link } : null;
+			})
+			.filter((item): item is { heading: HTMLElement; link: HTMLAnchorElement } => Boolean(item));
+
+		if (headings.length === 0) return;
+
+		toc.hidden = false;
+		toc.dataset.ready = 'true';
+
+		const setActiveLink = (slug: string, expandGroup = true) => {
+			const activeLink = tocLinks.find((link) => link.dataset.tocLink === slug);
+			const activeParent = activeLink?.dataset.tocParent;
+
+			for (const link of tocLinks) {
+				link.classList.toggle('active', link.dataset.tocLink === slug);
+			}
+
+			for (const group of tocGroups) {
+				group.classList.toggle('expanded', expandGroup && group.dataset.tocGroup === activeParent);
+			}
+		};
+
 		const getHashSlug = () => {
 			const rawHash = window.location.hash.slice(1);
 
@@ -162,10 +316,23 @@ const groups = headings.reduce<Array<Heading & { children: Heading[] }>>((acc, h
 				window.setTimeout(() => updateActiveLink(true, true), 120);
 			});
 		}
-	}
+	};
+
+	const initializeToc = (root: ParentNode) => {
+		buildToc(root);
+		activateToc();
+	};
+
+	initializeToc(document);
+	document.addEventListener('blog:content-unlocked', (event) => {
+		const customEvent = event as CustomEvent<{ root?: HTMLElement }>;
+		const root = customEvent.detail?.root ?? document;
+		initializeToc(root);
+		scrollToHashHeading(root);
+	});
 </script>
 
-<style>
+<style is:global>
 	.toc {
 		position: sticky;
 		top: 2rem;
@@ -220,7 +387,8 @@ const groups = headings.reduce<Array<Heading & { children: Heading[] }>>((acc, h
 		animation: slideDown 0.3s ease-in-out;
 	}
 
-	.toc__children-list {
+	.toc__children-list,
+	.toc__grandchildren-list {
 		display: grid;
 		gap: 0.1rem;
 		min-width: 0;
@@ -246,6 +414,11 @@ const groups = headings.reduce<Array<Heading & { children: Heading[] }>>((acc, h
 	.toc a[data-depth='3'] {
 		padding-left: 1.55rem;
 		font-size: 0.84rem;
+	}
+
+	.toc a[data-depth='4'] {
+		padding-left: 2.55rem;
+		font-size: 0.8rem;
 	}
 
 	.toc a:hover,
