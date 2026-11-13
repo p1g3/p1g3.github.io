@@ -17,6 +17,14 @@ const { title, description, image } = Astro.props;
 const imageURL = image ? new URL(image.src, Astro.url) : new URL(SITE_OG_IMAGE, Astro.site);
 ---
 
+<!-- Google tag -->
+<script is:inline async src="https://www.googletagmanager.com/gtm.js?id=GTM-MQ7BRSLG"></script>
+<script is:inline>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+</script>
+
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
